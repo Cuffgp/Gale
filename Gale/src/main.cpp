@@ -1,28 +1,22 @@
-#include "spdlog/spdlog.h"
-#include "GLFW/glfw3.h"
+#include "glpch.h"
 
 #include "vulkan/vulkan.h"
 
-#include <iostream>
+#include "Gale/Log.h"
+#include "Gale/WindowsWindow.h"
 
 int main()
 {
-	spdlog::info("Welcome to spdlog!");
-	spdlog::error("Some error message with arg: {}", 1);
+	Gale::Log::Init();
 
-	GLFWwindow* window;
+	GL_TRACE("Hello Trace");
+	GL_INFO("Hello Info");
+	GL_WARN("Hello Warn");
+	GL_ERROR("Hello Error");
+	GL_FATAL("Hello Critical");
 
-	if (!glfwInit())
-		exit(EXIT_FAILURE);
+	Gale::Scope<Gale::WindowsWindow> Window = Gale::CreateScope<Gale::WindowsWindow>();
 
-	window = glfwCreateWindow(800, 600, "Simple example", NULL, NULL);
+	Window->Run();
 
-    while (!glfwWindowShouldClose(window))
-    {
-		glfwPollEvents();
-    }
-
-	std::cout << "Hello WOrld!" << std::endl;
-
-	glfwTerminate();
 }
