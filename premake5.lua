@@ -18,6 +18,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Gale/vendor/glfw/include"
+IncludeDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Include"
 
 LibraryDir = {}
 
@@ -35,8 +36,8 @@ project "Gale"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
     
-	--pchheader "glpch.h"
-	--pchsource "Gale/src/tppch.cpp"
+	pchheader "glpch.h"
+	pchsource "Gale/src/glpch.cpp"
 
     files 
     { 
@@ -49,6 +50,7 @@ project "Gale"
 	includedirs
 	{
 		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Vulkan}",
 		"%{prj.name}/vendor"
 	}
 	
