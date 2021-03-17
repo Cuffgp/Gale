@@ -1,9 +1,13 @@
+#include "spdlog/spdlog.h"
 #include "GLFW/glfw3.h"
 
 #include <iostream>
 
 int main()
 {
+	spdlog::info("Welcome to spdlog!");
+	spdlog::error("Some error message with arg: {}", 1);
+
 	GLFWwindow* window;
 
 	if (!glfwInit())

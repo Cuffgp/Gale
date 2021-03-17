@@ -14,7 +14,16 @@ workspace "Gale"
 	}
 	
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-vcpkg = "C:/dev/vcpkg/packages"
+
+-- Include directories relative to root folder (solution directory)
+IncludeDir = {}
+IncludeDir["GLFW"] = "Gale/vendor/glfw/include"
+
+LibraryDir = {}
+
+
+group "Dependencies"
+	include "Gale/vendor/"
 
 project "Gale"
     location "Gale"
@@ -26,28 +35,31 @@ project "Gale"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
     
-	--pchheader "tppch.h"
-	--pchsource "Tempest/src/tppch.cpp"
+	--pchheader "glpch.h"
+	--pchsource "Gale/src/tppch.cpp"
 
     files 
     { 
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/src/**.c",
+		"%{prj.name}/src/**.hpp", 
+		"%{prj.name}/src/**.cpp",
     }
 	
 	includedirs
 	{
-		vcpkg .. "/glfw3_x64-windows-static/include"
+		"%{IncludeDir.GLFW}",
+		"%{prj.name}/vendor"
 	}
 	
 	libdirs
 	{
-		vcpkg .. "/glfw3_x64-windows-static/lib"
+
 	}
 	
 	links
 	{
-		"glfw3"
+		"GLFW"
 	}
 	
 

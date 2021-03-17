@@ -12,4 +12,5 @@ bin-int/
 **.vcxproj.filters
 **.vcxproj.user
 
+buildWindows.bat
 premake5.exe
