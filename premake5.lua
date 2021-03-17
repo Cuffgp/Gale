@@ -49,6 +49,7 @@ project "Gale"
 	
 	includedirs
 	{
+		"%{prj.name}/src",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Vulkan}",
 		"%{prj.name}/vendor"

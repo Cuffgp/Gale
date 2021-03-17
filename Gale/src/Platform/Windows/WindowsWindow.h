@@ -10,7 +10,8 @@ namespace Gale {
 		WindowsWindow();
 		~WindowsWindow();
 
-		void Run();
+		bool ShouldClose() { return glfwWindowShouldClose(m_Window); };
+		void PollEvents();
 	private:
 		GLFWwindow* m_Window;
 	};
