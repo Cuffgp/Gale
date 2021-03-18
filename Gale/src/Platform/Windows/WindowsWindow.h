@@ -12,6 +12,7 @@ namespace Gale {
 
 		bool ShouldClose() { return glfwWindowShouldClose(m_Window); };
 		void PollEvents();
+		GLFWwindow* GetWindowPointer() { return m_Window; }
 	private:
 		GLFWwindow* m_Window;
 	};

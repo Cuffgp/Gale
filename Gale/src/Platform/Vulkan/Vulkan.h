@@ -2,11 +2,3 @@
 
 #include <vulkan/vulkan.h>
 
-#define VK_CHECK_RESULT(f)															\
-{																					\
-	VkResult res = (f);																\
-	if (res != VK_SUCCESS)															\
-	{																				\
-		GL_ERROR("VkResult is '{0}' in {1}:{2}", res, __FILE__ , __LINE__);	\
-	}																				\
-}

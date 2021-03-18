@@ -12,6 +12,7 @@ namespace Gale {
 
 	private:
 		static VkInstance m_Instance;
+		VkDebugUtilsMessengerEXT m_debugMessenger;
 	};
 
 }
