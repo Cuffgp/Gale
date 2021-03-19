@@ -1,9 +1,9 @@
 #pragma once
 
-#include "vulkan/vulkan.h"
+#include "Vulkan.h"
 #include "Platform/Windows/WindowsWindow.h"
 
-namespace Sleet {
+namespace Gale {
 
 	// Creates the Vulkan Instance and set up Vlaidation Layers
 	class VulkanInstance

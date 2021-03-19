@@ -1,6 +1,7 @@
 #pragma once
+#include "Gale/Base.h"
 #include "Vulkan.h"
-#include "GLFW/glfw3.h"
+#include "VulkanInstance.h"
 
 namespace Gale {
 
@@ -11,7 +12,7 @@ namespace Gale {
 		~VulkanContext();
 
 	private:
-
+		Ref<VulkanInstance> m_Instance;
 	};
 
 }

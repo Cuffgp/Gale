@@ -6,6 +6,7 @@ namespace Gale {
 	Application::Application()
 	{
 		m_Window = CreateScope<WindowsWindow>();
+		m_Context = CreateScope<VulkanContext>();
 	}
 
 	Application::~Application()

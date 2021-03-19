@@ -21,6 +21,7 @@ IncludeDir["GLFW"] = "Gale/vendor/glfw/include"
 IncludeDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Include"
 
 LibraryDir = {}
+LibraryDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Lib/vulkan-1.lib"
 
 
 group "Dependencies"
@@ -55,14 +56,10 @@ project "Gale"
 		"%{prj.name}/vendor"
 	}
 	
-	libdirs
-	{
-
-	}
-	
 	links
 	{
-		"GLFW"
+		"GLFW",
+        "%{LibraryDir.Vulkan}"
 	}
 	
 

@@ -1,9 +1,7 @@
 #include "glpch.h"
 #include "VulkanInstance.h"
 
-namespace Sleet {
-
-	//const static bool EnableValidationLayers = true;
+namespace Gale {
 
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
 	{
@@ -28,17 +26,6 @@ namespace Sleet {
 		void* pUserData)
 	{
 		GL_INFO("Validation Layer: {}", pCallbackData->pMessage);
-
-		/*
-		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
-			SL_TRACE("Validation Layer: {}", pCallbackData->pMessage);
-		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
-			SL_INFO("Validation Layer: {}", pCallbackData->pMessage);
-		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-			SL_WARN("Validation Layer: {}", pCallbackData->pMessage);
-		else
-			SL_ERROR("Validation Layer: {}", pCallbackData->pMessage);
-			*/
 		
 		return VK_FALSE;
 	}
@@ -114,7 +101,7 @@ namespace Sleet {
 
 		for (const auto& extension : extensions)
 		{
-			SL_INFO("{}", extension.extensionName);
+			GL_INFO("{}", extension.extensionName);
 		}
 	}
 
@@ -175,7 +162,6 @@ namespace Sleet {
 
 		if (CreateDebugUtilsMessengerEXT(s_Instance, &createInfo, nullptr, &DebugMessenger) != VK_SUCCESS)
 			GL_ERROR("Failed to set up debug messenger!");
-
 	}
 
 }
