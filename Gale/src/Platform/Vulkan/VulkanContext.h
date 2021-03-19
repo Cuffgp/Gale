@@ -11,8 +11,7 @@ namespace Gale {
 		~VulkanContext();
 
 	private:
-		static VkInstance m_Instance;
-		VkDebugUtilsMessengerEXT m_debugMessenger;
+
 	};
 
 }
