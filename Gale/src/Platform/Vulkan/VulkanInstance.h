@@ -12,10 +12,11 @@ namespace Gale {
 		VulkanInstance();
 		~VulkanInstance();
 
-		static VkInstance GetInstance() { return s_Instance; }
+		static VkInstance Get() { return s_Instance; }
 
 	public:
 		const static bool EnableValidationLayers = true;
+		const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 	private:
 		void CreateInstance();
 		void GetAvalibleExtensions();
@@ -26,7 +27,6 @@ namespace Gale {
 	private:
 		inline static VkInstance s_Instance;
 		VkDebugUtilsMessengerEXT DebugMessenger;
-		const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 	};
 
 }
