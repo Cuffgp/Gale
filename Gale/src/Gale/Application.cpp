@@ -6,7 +6,7 @@ namespace Gale {
 	Application::Application()
 	{
 		m_Window = CreateScope<WindowsWindow>();
-		m_Context = CreateScope<VulkanContext>();
+		m_Graphics = CreateRef<VulkanGraphics>(m_Window->GetWindowPointer());
 	}
 
 	Application::~Application()
@@ -19,6 +19,7 @@ namespace Gale {
 		while (!m_Window->ShouldClose())
 		{
 			m_Window->PollEvents();
+			m_Graphics->drawFrame();
 		}
 	}
 

@@ -8,9 +8,9 @@ namespace Gale {
 	{
 	public:
 		static void Init();
-		static Ref<spdlog::logger>& Get() { return m_Logger; }
+		static std::shared_ptr<spdlog::logger>& Get() { return m_Logger; }
 	private:
-		static Ref<spdlog::logger> m_Logger;
+		static std::shared_ptr<spdlog::logger> m_Logger;
 	};
 
 }

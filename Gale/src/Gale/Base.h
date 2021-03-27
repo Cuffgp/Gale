@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "Gale/Log.h"
 
 namespace Gale {
 
