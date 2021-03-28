@@ -21,6 +21,8 @@ namespace Gale {
 			m_Window->PollEvents();
 			m_Graphics->drawFrame();
 		}
+
+		m_Graphics->end();
 	}
 
 }

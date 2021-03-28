@@ -65,9 +65,11 @@ namespace Gale {
 
 		void createCommandBuffers();
 
-		void createSemaphores();
+		void createSyncObjects();
 
 		void drawFrame();
+
+		void end();
 
 	private:
 
@@ -104,8 +106,12 @@ namespace Gale {
 
 		std::vector<VkCommandBuffer> commandBuffers;
 
-		VkSemaphore imageAvailableSemaphore;
-		VkSemaphore renderFinishedSemaphore;
+		const int max_frames_in_flight = 2;
+		size_t currentFrame = 0;
+		std::vector<VkSemaphore> imageAvailableSemaphores;
+		std::vector<VkSemaphore> renderFinishedSemaphores;
+		std::vector<VkFence> inFlightFences;
+		std::vector<VkFence> imagesInFlight;
 
 	};
 
