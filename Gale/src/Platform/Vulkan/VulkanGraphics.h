@@ -51,6 +51,8 @@ namespace Gale {
 		VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+		void recreateSwapChain();
+		void cleanupSwapChain();
 
 		void createImageViews();
 
@@ -108,11 +110,15 @@ namespace Gale {
 
 		const int max_frames_in_flight = 2;
 		size_t currentFrame = 0;
+		
+
 		std::vector<VkSemaphore> imageAvailableSemaphores;
 		std::vector<VkSemaphore> renderFinishedSemaphores;
 		std::vector<VkFence> inFlightFences;
 		std::vector<VkFence> imagesInFlight;
 
+	public:
+		bool framebufferResized = false;
 	};
 
 }

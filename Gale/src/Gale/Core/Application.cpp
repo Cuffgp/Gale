@@ -44,6 +44,9 @@ namespace Gale {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		m_Graphics->framebufferResized = true;
+		m_Graphics->recreateSwapChain();
+		m_Graphics->drawFrame();
 		return false;
 	}
 
