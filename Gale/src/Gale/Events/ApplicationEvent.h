@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Hazel/Events/Event.h"
+#include "Gale/Events/Event.h"
 
-namespace Hazel {
+namespace Gale {
 
 	class WindowResizeEvent : public Event
 	{

@@ -6,5 +6,5 @@
 #include <iostream>
 #include <fstream>
 
-#include "Gale/Base.h"
-#include "Gale/Log.h"
+#include "Gale/Core/Base.h"
+#include "Gale/Core/Log.h"

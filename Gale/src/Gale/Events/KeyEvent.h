@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Hazel/Events/Event.h"
-#include "Hazel/Core/KeyCodes.h"
+#include "Gale/Events/Event.h"
+#include "Gale/Core/KeyCodes.h"
 
-namespace Hazel {
+namespace Gale {
 
 	class KeyEvent : public Event
 	{

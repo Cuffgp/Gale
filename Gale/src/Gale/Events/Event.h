@@ -1,10 +1,9 @@
 #pragma once
 #include <functional>
 
-#include "Hazel/Debug/Instrumentor.h"
-#include "Hazel/Core/Base.h"
+#include "Gale/Core/Base.h"
 
-namespace Hazel {
+namespace Gale {
 
 	// Events in Hazel are currently blocking, meaning when an event occurs it
 	// immediately gets dispatched and must be dealt with right then an there.

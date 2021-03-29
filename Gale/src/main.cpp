@@ -1,9 +1,6 @@
 #include "glpch.h"
 
-#include "Gale/Application.h"
-#include "vulkan/vulkan.h"
-
-
+#include "Gale/Core/Application.h"
 
 int main()
 {
