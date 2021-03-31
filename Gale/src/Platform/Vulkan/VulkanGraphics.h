@@ -55,16 +55,11 @@ namespace Gale {
 		void cleanupSwapChain();
 
 		void createImageViews();
-
 		void createRenderPass();
-
 		void createGraphicsPipeline();
 		VkShaderModule createShaderModule(const std::vector<char>& code);
-
 		void createFramebuffers();
-
 		void createCommandPool();
-
 		void createCommandBuffers();
 
 		void createSyncObjects();
@@ -82,10 +77,10 @@ namespace Gale {
 		const bool enableValidationLayers = true;
 		const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 
-		VkSurfaceKHR surface;
+		VkSurfaceKHR m_surface;
 
-		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-		VkDevice device;
+		VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+		VkDevice m_device;
 		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		VkQueue graphicsQueue;
 		VkQueue presentQueue;

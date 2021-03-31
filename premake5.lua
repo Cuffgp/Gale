@@ -18,6 +18,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Gale/vendor/glfw/include"
+IncludeDir["ImGui"] = "Gale/vendor/imgui"
 IncludeDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Include"
 
 LibraryDir = {}
@@ -52,6 +53,7 @@ project "Gale"
 	{
 		"%{prj.name}/src",
 		"%{IncludeDir.GLFW}",
+        "%{IncludeDir.ImGui}",
 		"%{IncludeDir.Vulkan}",
 		"%{prj.name}/vendor"
 	}
@@ -59,6 +61,7 @@ project "Gale"
 	links
 	{
 		"GLFW",
+        "ImGui",
         "%{LibraryDir.Vulkan}"
 	}
 	

@@ -30,7 +30,7 @@ namespace Gale {
 
 	void Application::OnEvent(Event& e)
 	{
-		GL_INFO("Event: {}", e.ToString());
+		//GL_INFO("Event: {}", e.ToString());
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(GL_BIND_EVENT_FN(Application::OnWindowClose));
