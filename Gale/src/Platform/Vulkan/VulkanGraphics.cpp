@@ -250,6 +250,11 @@ namespace Gale {
 				break;
 			i++;
 		}
+
+		GL_INFO("{} Queue Familys", queueFamilyCount);
+		GL_INFO("Using Family {}", i);
+		GL_INFO("Graphics {0}, Present {1}", indices.graphicsFamily.value(), indices.presentFamily.value());
+
 		return indices;
 	}
 
