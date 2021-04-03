@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <sstream>
 
 #include "Gale/Core/Base.h"
 
