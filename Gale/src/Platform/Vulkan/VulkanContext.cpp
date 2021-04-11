@@ -10,6 +10,7 @@ namespace Gale {
 		m_Device = CreateRef<VulkanDevice>(m_Window->GetWindowPointer());
 		m_SwapChain = CreateRef<VulkanSwapChain>(m_Device, extent);
 
+		loadModels();
 		createPipelineLayout();
 		createPipeline();
 		createCommandBuffers();
@@ -18,6 +19,12 @@ namespace Gale {
 	VulkanContext::~VulkanContext()
 	{
 		vkDestroyPipelineLayout(m_Device->device(), pipelineLayout, nullptr);
+	}
+
+	void VulkanContext::loadModels()
+	{
+		std::vector<VulkanModel::Vertex> vertices{ {{0.0f, -0.5f}}, {{0.5f, 0.5f}}, {{-0.5f, 0.5f}} };
+		m_Model = CreateScope<VulkanModel>(m_Device, vertices);
 	}
 
 	void VulkanContext::createPipelineLayout()
@@ -90,7 +97,10 @@ namespace Gale {
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			m_Pipeline->bind(commandBuffers[i]);
-			vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+
+			//vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+			m_Model->bind(commandBuffers[i]);
+			m_Model->draw(commandBuffers[i]);
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {

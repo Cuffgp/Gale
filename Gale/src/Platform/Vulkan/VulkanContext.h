@@ -4,6 +4,7 @@
 
 #include "Platform/Windows/WindowsWindow.h"
 #include "VulkanDevice.h"
+#include "VulkanModel.h"
 #include "VulkanPipeline.h"
 #include "VulkanSwapChain.h"
 
@@ -19,6 +20,7 @@ namespace Gale
 		void waitIdle();
 	private:
 
+		void loadModels();
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
@@ -32,5 +34,6 @@ namespace Gale
 		Scope<VulkanPipeline> m_Pipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
+		Scope<VulkanModel> m_Model;
 	};
 }

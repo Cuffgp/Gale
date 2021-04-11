@@ -2,6 +2,7 @@
 
 #include "Application.h"
 
+
 namespace Gale {
 
 	Application::Application()

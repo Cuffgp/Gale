@@ -20,6 +20,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Gale/vendor/glfw/include"
 IncludeDir["ImGui"] = "Gale/vendor/imgui"
 IncludeDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Include"
+IncludeDir["glm"] = "Gale/vendor/glm"
 
 LibraryDir = {}
 LibraryDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Lib/vulkan-1.lib"
@@ -55,6 +56,7 @@ project "Gale"
 		"%{IncludeDir.GLFW}",
         "%{IncludeDir.ImGui}",
 		"%{IncludeDir.Vulkan}",
+        "%{IncludeDir.glm}",
 		"%{prj.name}/vendor"
 	}
 	
