@@ -6,10 +6,10 @@ namespace Gale {
 
 	Application::Application()
 	{
-		m_Window = CreateScope<WindowsWindow>();
+		m_Window = CreateRef<WindowsWindow>();
 		m_Window->SetEventCallback(GL_BIND_EVENT_FN(Application::OnEvent));
 
-		m_Graphics = CreateRef<VulkanGraphics>(m_Window->GetWindowPointer());
+		m_Context = CreateScope<VulkanContext>(m_Window);
 	}
 
 	Application::~Application()
@@ -22,10 +22,11 @@ namespace Gale {
 		while (!m_Window->ShouldClose())
 		{
 			m_Window->PollEvents();
-			m_Graphics->drawFrame();
+			m_Context->drawFrame();
 		}
 
-		m_Graphics->end();
+		m_Context->waitIdle();
+
 	}
 
 	void Application::OnEvent(Event& e)
@@ -44,9 +45,7 @@ namespace Gale {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
-		m_Graphics->framebufferResized = true;
-		m_Graphics->recreateSwapChain();
-		m_Graphics->drawFrame();
+
 		return false;
 	}
 

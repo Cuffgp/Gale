@@ -4,7 +4,7 @@
 #include "Gale/Events/ApplicationEvent.h"
 
 #include "Platform/Windows/WindowsWindow.h"
-#include "Platform/Vulkan/VulkanGraphics.h"
+#include "Platform/Vulkan/VulkanContext.h"
 
 namespace Gale {
 
@@ -20,8 +20,8 @@ namespace Gale {
 		bool OnWindowResize(WindowResizeEvent& e);
 
 	private:
-		Scope<WindowsWindow> m_Window;
-		Ref<VulkanGraphics> m_Graphics;
+		Ref<WindowsWindow> m_Window;
+		Scope<VulkanContext> m_Context;
 	};
 
 }

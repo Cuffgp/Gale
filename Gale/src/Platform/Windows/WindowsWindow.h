@@ -14,6 +14,8 @@ namespace Gale {
 		void PollEvents();
 		GLFWwindow* GetWindowPointer() { return m_Window; }
 		void SetEventCallback(const std::function<void(Event&)>& callback) { m_Data.EventCallback = callback; }
+		uint32_t GetWidth() { return m_Data.Width; }
+		uint32_t GetHeight() { return m_Data.Height; }
 
 	private:
 
