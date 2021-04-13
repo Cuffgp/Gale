@@ -31,7 +31,8 @@ namespace Gale {
 		VkInstance instance,
 		const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
 		const VkAllocationCallbacks* pAllocator,
-		VkDebugUtilsMessengerEXT* pDebugMessenger) {
+		VkDebugUtilsMessengerEXT* pDebugMessenger)
+	{
 		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
 			instance,
 			"vkCreateDebugUtilsMessengerEXT");
@@ -46,7 +47,8 @@ namespace Gale {
 	void DestroyDebugUtilsMessengerEXT(
 		VkInstance instance,
 		VkDebugUtilsMessengerEXT debugMessenger,
-		const VkAllocationCallbacks* pAllocator) {
+		const VkAllocationCallbacks* pAllocator) 
+	{
 		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
 			instance,
 			"vkDestroyDebugUtilsMessengerEXT");
@@ -56,7 +58,8 @@ namespace Gale {
 	}
 
 	// class member functions
-	VulkanDevice::VulkanDevice(GLFWwindow* window) : window{ window } {
+	VulkanDevice::VulkanDevice(GLFWwindow* window) : window{ window } 
+	{
 		createInstance();
 		setupDebugMessenger();
 		createSurface();
@@ -65,7 +68,8 @@ namespace Gale {
 		createCommandPool();
 	}
 
-	VulkanDevice::~VulkanDevice() {
+	VulkanDevice::~VulkanDevice() 
+	{
 		vkDestroyCommandPool(device_, commandPool, nullptr);
 		vkDestroyDevice(device_, nullptr);
 
@@ -77,9 +81,10 @@ namespace Gale {
 		vkDestroyInstance(instance, nullptr);
 	}
 
-	void VulkanDevice::createInstance() {
+	void VulkanDevice::createInstance() 
+	{
 		if (enableValidationLayers && !checkValidationLayerSupport()) {
-			throw std::runtime_error("validation layers requested, but not available!");
+			GL_ERROR("validation layers requested, but not available!");
 		}
 
 		VkApplicationInfo appInfo = {};
@@ -112,17 +117,18 @@ namespace Gale {
 		}
 
 		if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create instance!");
+			GL_ERROR("failed to create instance!");
 		}
 
 		hasGflwRequiredInstanceExtensions();
 	}
 
-	void VulkanDevice::pickPhysicalDevice() {
+	void VulkanDevice::pickPhysicalDevice() 
+	{
 		uint32_t deviceCount = 0;
 		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 		if (deviceCount == 0) {
-			throw std::runtime_error("failed to find GPUs with Vulkan support!");
+			GL_ERROR("failed to find GPUs with Vulkan support!");
 		}
 		GL_INFO("Device count: {}", deviceCount);
 		std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -136,14 +142,15 @@ namespace Gale {
 		}
 
 		if (physicalDevice == VK_NULL_HANDLE) {
-			throw std::runtime_error("failed to find a suitable GPU!");
+			GL_ERROR("failed to find a suitable GPU!");
 		}
 
 		vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 		GL_INFO("Physical device: {}",properties.deviceName);
 	}
 
-	void VulkanDevice::createLogicalDevice() {
+	void VulkanDevice::createLogicalDevice() 
+	{
 		QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
 		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -183,14 +190,15 @@ namespace Gale {
 		}
 
 		if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create logical device!");
+			GL_ERROR("failed to create logical device!");
 		}
 
 		vkGetDeviceQueue(device_, indices.graphicsFamily, 0, &graphicsQueue_);
 		vkGetDeviceQueue(device_, indices.presentFamily, 0, &presentQueue_);
 	}
 
-	void VulkanDevice::createCommandPool() {
+	void VulkanDevice::createCommandPool()
+	{
 		QueueFamilyIndices queueFamilyIndices = findPhysicalQueueFamilies();
 
 		VkCommandPoolCreateInfo poolInfo = {};
@@ -200,18 +208,19 @@ namespace Gale {
 			VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
 		if (vkCreateCommandPool(device_, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create command pool!");
+			GL_ERROR("failed to create command pool!");
 		}
 	}
 
 	void VulkanDevice::createSurface()
 	{ 
 		if (glfwCreateWindowSurface(instance, window, NULL, &surface_) != VK_SUCCESS){
-			throw std::runtime_error("failed to create surface!");
+			GL_ERROR("failed to create surface!");
 			}
 	}
 
-	bool VulkanDevice::isDeviceSuitable(VkPhysicalDevice device) {
+	bool VulkanDevice::isDeviceSuitable(VkPhysicalDevice device)
+	{
 		QueueFamilyIndices indices = findQueueFamilies(device);
 
 		bool extensionsSupported = checkDeviceExtensionSupport(device);
@@ -229,7 +238,8 @@ namespace Gale {
 			supportedFeatures.samplerAnisotropy;
 	}
 
-	void VulkanDevice::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
+	void VulkanDevice::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) 
+	{
 		createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
@@ -242,16 +252,18 @@ namespace Gale {
 		createInfo.pUserData = nullptr;  // Optional
 	}
 
-	void VulkanDevice::setupDebugMessenger() {
+	void VulkanDevice::setupDebugMessenger()
+	{
 		if (!enableValidationLayers) return;
 		VkDebugUtilsMessengerCreateInfoEXT createInfo;
 		populateDebugMessengerCreateInfo(createInfo);
 		if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-			throw std::runtime_error("failed to set up debug messenger!");
+			GL_ERROR("failed to set up debug messenger!");
 		}
 	}
 
-	bool VulkanDevice::checkValidationLayerSupport() {
+	bool VulkanDevice::checkValidationLayerSupport()
+	{
 		uint32_t layerCount;
 		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
@@ -276,7 +288,8 @@ namespace Gale {
 		return true;
 	}
 
-	std::vector<const char*> VulkanDevice::getRequiredExtensions() {
+	std::vector<const char*> VulkanDevice::getRequiredExtensions() 
+	{
 		uint32_t glfwExtensionCount = 0;
 		const char** glfwExtensions;
 		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -290,7 +303,8 @@ namespace Gale {
 		return extensions;
 	}
 
-	void VulkanDevice::hasGflwRequiredInstanceExtensions() {
+	void VulkanDevice::hasGflwRequiredInstanceExtensions() 
+	{
 		uint32_t extensionCount = 0;
 		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 		std::vector<VkExtensionProperties> extensions(extensionCount);
@@ -308,12 +322,13 @@ namespace Gale {
 		for (const auto& required : requiredExtensions) {
 			GL_INFO("\t {}", required);
 			if (available.find(required) == available.end()) {
-				throw std::runtime_error("Missing required glfw extension");
+				GL_ERROR("Missing required glfw extension");
 			}
 		}
 	}
 
-	bool VulkanDevice::checkDeviceExtensionSupport(VkPhysicalDevice device) {
+	bool VulkanDevice::checkDeviceExtensionSupport(VkPhysicalDevice device)
+	{
 		uint32_t extensionCount;
 		vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
@@ -333,7 +348,8 @@ namespace Gale {
 		return requiredExtensions.empty();
 	}
 
-	QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device) {
+	QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device) 
+	{
 		QueueFamilyIndices indices;
 
 		uint32_t queueFamilyCount = 0;
@@ -364,7 +380,8 @@ namespace Gale {
 		return indices;
 	}
 
-	SwapChainSupportDetails VulkanDevice::querySwapChainSupport(VkPhysicalDevice device) {
+	SwapChainSupportDetails VulkanDevice::querySwapChainSupport(VkPhysicalDevice device) 
+	{
 		SwapChainSupportDetails details;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface_, &details.capabilities);
 
@@ -391,8 +408,10 @@ namespace Gale {
 	}
 
 	VkFormat VulkanDevice::findSupportedFormat(
-		const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
-		for (VkFormat format : candidates) {
+		const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+	{
+		for (VkFormat format : candidates) 
+		{
 			VkFormatProperties props;
 			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
 
@@ -404,20 +423,23 @@ namespace Gale {
 				return format;
 			}
 		}
-		throw std::runtime_error("failed to find supported format!");
+		GL_ERROR("failed to find supported format!");
+		return candidates[0];
 	}
 
-	uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+	uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) 
+	{
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
-		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) 
+		{
 			if ((typeFilter & (1 << i)) &&
 				(memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
 				return i;
 			}
 		}
-
-		throw std::runtime_error("failed to find suitable memory type!");
+		GL_ERROR("failed to find suitable memory type!");
+		return 0;
 	}
 
 	void VulkanDevice::createBuffer(
@@ -425,7 +447,8 @@ namespace Gale {
 		VkBufferUsageFlags usage,
 		VkMemoryPropertyFlags properties,
 		VkBuffer& buffer,
-		VkDeviceMemory& bufferMemory) {
+		VkDeviceMemory& bufferMemory)
+	{
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;
@@ -433,7 +456,7 @@ namespace Gale {
 		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 		if (vkCreateBuffer(device_, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create vertex buffer!");
+			GL_ERROR("failed to create vertex buffer!");
 		}
 
 		VkMemoryRequirements memRequirements;
@@ -445,13 +468,14 @@ namespace Gale {
 		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
 		if (vkAllocateMemory(device_, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate vertex buffer memory!");
+			GL_ERROR("failed to allocate vertex buffer memory!");
 		}
 
 		vkBindBufferMemory(device_, buffer, bufferMemory, 0);
 	}
 
-	VkCommandBuffer VulkanDevice::beginSingleTimeCommands() {
+	VkCommandBuffer VulkanDevice::beginSingleTimeCommands() 
+	{
 		VkCommandBufferAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -469,7 +493,8 @@ namespace Gale {
 		return commandBuffer;
 	}
 
-	void VulkanDevice::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
+	void VulkanDevice::endSingleTimeCommands(VkCommandBuffer commandBuffer) 
+	{
 		vkEndCommandBuffer(commandBuffer);
 
 		VkSubmitInfo submitInfo{};
@@ -483,7 +508,8 @@ namespace Gale {
 		vkFreeCommandBuffers(device_, commandPool, 1, &commandBuffer);
 	}
 
-	void VulkanDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+	void VulkanDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) 
+	{
 		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
 		VkBufferCopy copyRegion{};
@@ -496,7 +522,8 @@ namespace Gale {
 	}
 
 	void VulkanDevice::copyBufferToImage(
-		VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount) {
+		VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount) 
+	{
 		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
 		VkBufferImageCopy region{};
@@ -529,7 +556,7 @@ namespace Gale {
 		VkDeviceMemory& imageMemory) 
 	{
 		if (vkCreateImage(device_, &imageInfo, nullptr, &image) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create image!");
+			GL_ERROR("failed to create image!");
 		}
 
 		VkMemoryRequirements memRequirements;
@@ -541,11 +568,11 @@ namespace Gale {
 		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
 		if (vkAllocateMemory(device_, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate image memory!");
+			GL_ERROR("failed to allocate image memory!");
 		}
 
 		if (vkBindImageMemory(device_, image, imageMemory, 0) != VK_SUCCESS) {
-			throw std::runtime_error("failed to bind image memory!");
+			GL_ERROR("failed to bind image memory!");
 		}
 	}
 

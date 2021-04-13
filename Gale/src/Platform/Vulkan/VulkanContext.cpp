@@ -23,11 +23,16 @@ namespace Gale {
 	{
 		std::vector<VulkanModel::Vertex> vertices
 		{
-			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}} 
+			{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+			{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+			{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
 		};
-		m_Model = CreateScope<VulkanModel>(m_Device, vertices);
+
+		std::vector<uint32_t> indices
+		{0, 1, 2, 2, 3, 0};
+
+		m_Model = CreateScope<VulkanModel>(m_Device, vertices, indices);
 	}
 
 	void VulkanContext::createPipelineLayout()

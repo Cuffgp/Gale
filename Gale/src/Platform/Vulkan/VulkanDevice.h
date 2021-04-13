@@ -6,13 +6,15 @@
 
 namespace Gale {
 
-	struct SwapChainSupportDetails {
+	struct SwapChainSupportDetails 
+	{
 		VkSurfaceCapabilitiesKHR capabilities;
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR> presentModes;
 	};
 
-	struct QueueFamilyIndices {
+	struct QueueFamilyIndices
+	{
 		uint32_t graphicsFamily;
 		uint32_t presentFamily;
 		bool graphicsFamilyHasValue = false;
@@ -39,6 +41,8 @@ namespace Gale {
 		VulkanDevice& operator=(VulkanDevice&&) = delete;
 
 		VkCommandPool getCommandPool() { return commandPool; }
+		VkInstance getInstance() { return instance; }
+		VkPhysicalDevice getPhysicalDevice() { return physicalDevice; }
 		VkDevice device() { return device_; }
 		VkSurfaceKHR surface() { return surface_; }
 		VkQueue graphicsQueue() { return graphicsQueue_; }

@@ -7,14 +7,20 @@
 
 namespace Gale {
 
-	VulkanModel::VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices) : m_Device{ device } {
+	VulkanModel::VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices,
+		const std::vector<uint32_t>& indices) : m_Device{ device }
+	{
 		createVertexBuffers(vertices);
+		createIndexBuffers(indices);
 	}
 
 	VulkanModel::~VulkanModel()
 	{
 		vkDestroyBuffer(m_Device->device(), vertexBuffer, nullptr);
 		vkFreeMemory(m_Device->device(), vertexBufferMemory, nullptr);
+
+		vkDestroyBuffer(m_Device->device(), indexBuffer, nullptr);
+		vkFreeMemory(m_Device->device(), indexBufferMemory, nullptr);
 	}
 
 	void VulkanModel::createVertexBuffers(const std::vector<Vertex>& vertices) 
@@ -35,9 +41,26 @@ namespace Gale {
 		vkUnmapMemory(m_Device->device(), vertexBufferMemory);
 	}
 
+	void VulkanModel::createIndexBuffers(const std::vector<uint32_t>& indicies)
+	{
+		indexCount = static_cast<uint32_t>(indicies.size());
+		VkDeviceSize bufferSize = sizeof(indicies[0]) * indexCount;
+		m_Device->createBuffer(
+			bufferSize,
+			VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			indexBuffer,
+			indexBufferMemory);
+
+		void* data;
+		vkMapMemory(m_Device->device(), indexBufferMemory, 0, bufferSize, 0, &data);
+		memcpy(data, indicies.data(), static_cast<size_t>(bufferSize));
+		vkUnmapMemory(m_Device->device(), indexBufferMemory);
+	}
+
 	void VulkanModel::draw(VkCommandBuffer commandBuffer) 
 	{
-		vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
 	}
 
 	void VulkanModel::bind(VkCommandBuffer commandBuffer) 
@@ -45,6 +68,7 @@ namespace Gale {
 		VkBuffer buffers[] = { vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+		vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 	}
 
 	std::vector<VkVertexInputBindingDescription> VulkanModel::Vertex::getBindingDescriptions() 

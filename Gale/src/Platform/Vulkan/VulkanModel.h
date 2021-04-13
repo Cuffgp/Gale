@@ -26,7 +26,7 @@ namespace Gale {
 			static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
 		};
 
-		VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices);
+		VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 		~VulkanModel();
 
 		VulkanModel(const VulkanModel&) = delete;
@@ -37,10 +37,15 @@ namespace Gale {
 
 	private:
 		void createVertexBuffers(const std::vector<Vertex>& vertices);
+		void createIndexBuffers(const std::vector<uint32_t>& indices);
 
 		Ref<VulkanDevice> m_Device;
 		VkBuffer vertexBuffer;
 		VkDeviceMemory vertexBufferMemory;
 		uint32_t vertexCount;
+
+		VkBuffer indexBuffer;
+		VkDeviceMemory indexBufferMemory;
+		uint32_t indexCount;
 	};
 }
