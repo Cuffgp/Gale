@@ -11,7 +11,8 @@ namespace Gale {
 		createVertexBuffers(vertices);
 	}
 
-	VulkanModel::~VulkanModel() {
+	VulkanModel::~VulkanModel()
+	{
 		vkDestroyBuffer(m_Device->device(), vertexBuffer, nullptr);
 		vkFreeMemory(m_Device->device(), vertexBufferMemory, nullptr);
 	}
@@ -34,17 +35,20 @@ namespace Gale {
 		vkUnmapMemory(m_Device->device(), vertexBufferMemory);
 	}
 
-	void VulkanModel::draw(VkCommandBuffer commandBuffer) {
+	void VulkanModel::draw(VkCommandBuffer commandBuffer) 
+	{
 		vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
 	}
 
-	void VulkanModel::bind(VkCommandBuffer commandBuffer) {
+	void VulkanModel::bind(VkCommandBuffer commandBuffer) 
+	{
 		VkBuffer buffers[] = { vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 	}
 
-	std::vector<VkVertexInputBindingDescription> VulkanModel::Vertex::getBindingDescriptions() {
+	std::vector<VkVertexInputBindingDescription> VulkanModel::Vertex::getBindingDescriptions() 
+	{
 		std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
 		bindingDescriptions[0].binding = 0;
 		bindingDescriptions[0].stride = sizeof(Vertex);
@@ -52,13 +56,20 @@ namespace Gale {
 		return bindingDescriptions;
 	}
 
-	std::vector<VkVertexInputAttributeDescription> VulkanModel::Vertex::getAttributeDescriptions() {
-		std::vector<VkVertexInputAttributeDescription> attributeDescriptions(1);
+	std::vector<VkVertexInputAttributeDescription> VulkanModel::Vertex::getAttributeDescriptions() 
+	{
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
 		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-		attributeDescriptions[0].offset = 0;
+		attributeDescriptions[0].offset = offsetof(Vertex, position);;
+
+		attributeDescriptions[1].binding = 0;
+		attributeDescriptions[1].location = 1;
+		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		attributeDescriptions[1].offset = offsetof(Vertex, color);
+
 		return attributeDescriptions;
 	}
 
-}  // namespace lve 
+}

@@ -5,14 +5,12 @@ namespace Gale {
 
 	VulkanContext::VulkanContext(Ref<WindowsWindow> window) : m_Window(window)
 	{
-		VkExtent2D extent = { static_cast<uint32_t>(m_Window->GetWidth()), static_cast<uint32_t>(m_Window->GetHeight()) };
 
 		m_Device = CreateRef<VulkanDevice>(m_Window->GetWindowPointer());
-		m_SwapChain = CreateRef<VulkanSwapChain>(m_Device, extent);
 
 		loadModels();
 		createPipelineLayout();
-		createPipeline();
+		recreateSwapChain(static_cast<uint32_t>(m_Window->GetWidth()), static_cast<uint32_t>(m_Window->GetHeight()));
 		createCommandBuffers();
 	}
 
@@ -23,7 +21,12 @@ namespace Gale {
 
 	void VulkanContext::loadModels()
 	{
-		std::vector<VulkanModel::Vertex> vertices{ {{0.0f, -0.5f}}, {{0.5f, 0.5f}}, {{-0.5f, 0.5f}} };
+		std::vector<VulkanModel::Vertex> vertices
+		{
+			{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}} 
+		};
 		m_Model = CreateScope<VulkanModel>(m_Device, vertices);
 	}
 
@@ -57,6 +60,16 @@ namespace Gale {
 			pipelineConfig);
 	}
 
+	void VulkanContext::recreateSwapChain(uint32_t width, uint32_t height)
+	{
+		VkExtent2D extent = { width, height };
+
+		vkDeviceWaitIdle(m_Device->device());
+		m_SwapChain = nullptr;
+		m_SwapChain = CreateScope<VulkanSwapChain>(m_Device, extent);
+		createPipeline();
+	}
+
 	void VulkanContext::createCommandBuffers() 
 	{
 		commandBuffers.resize(m_SwapChain->imageCount());
@@ -72,51 +85,67 @@ namespace Gale {
 			throw std::runtime_error("failed to allocate command buffers!");
 		}
 
-		for (int i = 0; i < commandBuffers.size(); i++) {
-			VkCommandBufferBeginInfo beginInfo{};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	}
 
-			if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS) {
-				throw std::runtime_error("failed to begin recording command buffer!");
-			}
+	void VulkanContext::recordCommandBuffer(int imageIndex)
+	{
+		VkCommandBufferBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-			VkRenderPassBeginInfo renderPassInfo{};
-			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			renderPassInfo.renderPass = m_SwapChain->getRenderPass();
-			renderPassInfo.framebuffer = m_SwapChain->getFrameBuffer(i);
+		if (vkBeginCommandBuffer(commandBuffers[imageIndex], &beginInfo) != VK_SUCCESS) {
+			throw std::runtime_error("failed to begin recording command buffer!");
+		}
 
-			renderPassInfo.renderArea.offset = { 0, 0 };
-			renderPassInfo.renderArea.extent = m_SwapChain->getSwapChainExtent();
+		VkRenderPassBeginInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassInfo.renderPass = m_SwapChain->getRenderPass();
+		renderPassInfo.framebuffer = m_SwapChain->getFrameBuffer(imageIndex);
 
-			std::array<VkClearValue, 2> clearValues{};
-			clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
-			clearValues[1].depthStencil = { 1.0f, 0 };
-			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-			renderPassInfo.pClearValues = clearValues.data();
+		renderPassInfo.renderArea.offset = { 0, 0 };
+		renderPassInfo.renderArea.extent = m_SwapChain->getSwapChainExtent();
 
-			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		std::array<VkClearValue, 2> clearValues{};
+		clearValues[0].color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		clearValues[1].depthStencil = { 1.0f, 0 };
+		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		renderPassInfo.pClearValues = clearValues.data();
 
-			m_Pipeline->bind(commandBuffers[i]);
+		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-			//vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
-			m_Model->bind(commandBuffers[i]);
-			m_Model->draw(commandBuffers[i]);
+		m_Pipeline->bind(commandBuffers[imageIndex]);
 
-			vkCmdEndRenderPass(commandBuffers[i]);
-			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
-				throw std::runtime_error("failed to record command buffer!");
-			}
+		m_Model->bind(commandBuffers[imageIndex]);
+		m_Model->draw(commandBuffers[imageIndex]);
+
+		vkCmdEndRenderPass(commandBuffers[imageIndex]);
+		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS) {
+			throw std::runtime_error("failed to record command buffer!");
 		}
 	}
 
 	void VulkanContext::drawFrame() {
 		uint32_t imageIndex;
 		auto result = m_SwapChain->acquireNextImage(&imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR)
+		{
+			recreateSwapChain(static_cast<uint32_t>(m_Window->GetWidth()), static_cast<uint32_t>(m_Window->GetHeight()));
+			return;
+		}
+
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
+		recordCommandBuffer(imageIndex);
 		result = m_SwapChain->submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+		{
+			recreateSwapChain(static_cast<uint32_t>(m_Window->GetWidth()), static_cast<uint32_t>(m_Window->GetHeight()));
+			return;
+		}
+
 		if (result != VK_SUCCESS) {
 			throw std::runtime_error("failed to present swap chain image!");
 		}
@@ -125,6 +154,12 @@ namespace Gale {
 	void VulkanContext::waitIdle()
 	{
 		vkDeviceWaitIdle(m_Device->device());
+	}
+
+	void VulkanContext::onWindowResize(uint32_t width, uint32_t height)
+	{
+		recreateSwapChain(width, height);
+		drawFrame();
 	}
 
 }

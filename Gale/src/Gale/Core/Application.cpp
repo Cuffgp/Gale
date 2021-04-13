@@ -46,6 +46,10 @@ namespace Gale {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		uint32_t width = e.GetWidth();
+		uint32_t height = e.GetHeight();
+
+		m_Context->onWindowResize(width, height);
 
 		return false;
 	}

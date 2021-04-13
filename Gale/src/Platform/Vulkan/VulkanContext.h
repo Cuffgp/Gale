@@ -18,19 +18,22 @@ namespace Gale
 
 		void drawFrame();
 		void waitIdle();
+		void onWindowResize(uint32_t width, uint32_t height);
 	private:
 
 		void loadModels();
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
+		void recreateSwapChain(uint32_t width, uint32_t height);
+		void recordCommandBuffer(int imageIndex);
 
 		GLFWwindow* m_WindowPtr;
 
 		Ref<WindowsWindow> m_Window;
 		Ref<VulkanDevice> m_Device;
 
-		Ref<VulkanSwapChain> m_SwapChain;
+		Scope<VulkanSwapChain> m_SwapChain;
 		Scope<VulkanPipeline> m_Pipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
