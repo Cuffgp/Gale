@@ -12,6 +12,7 @@ namespace Gale {
 		static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
 		VulkanSwapChain(Ref<VulkanDevice> deviceRef, VkExtent2D windowExtent);
+		VulkanSwapChain(Ref<VulkanDevice> deviceRef, VkExtent2D windowExtent, Ref<VulkanSwapChain> previous);
 		~VulkanSwapChain();
 
 		VulkanSwapChain(const VulkanSwapChain&) = delete;
@@ -35,6 +36,7 @@ namespace Gale {
 		VkResult submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
 	private:
+		void init();
 		void createSwapChain();
 		void createImageViews();
 		void createDepthResources();
@@ -65,6 +67,7 @@ namespace Gale {
 		VkExtent2D windowExtent;
 
 		VkSwapchainKHR swapChain;
+		Ref<VulkanSwapChain> oldSwapChain;
 
 		std::vector<VkSemaphore> imageAvailableSemaphores;
 		std::vector<VkSemaphore> renderFinishedSemaphores;

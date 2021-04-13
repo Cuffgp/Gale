@@ -46,11 +46,11 @@ namespace Gale {
 
 	void VulkanContext::createPipeline() 
 	{
+		assert(m_SwapChain != nullptr && "Cannot create pipeline before swap chain");
+		assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
+
 		PipelineConfigInfo pipelineConfig{};
-		VulkanPipeline::defaultPipelineConfigInfo(
-			pipelineConfig,
-			m_SwapChain->width(),
-			m_SwapChain->height());
+		VulkanPipeline::defaultPipelineConfigInfo(pipelineConfig);
 		pipelineConfig.renderPass = m_SwapChain->getRenderPass();
 		pipelineConfig.pipelineLayout = pipelineLayout;
 		m_Pipeline = CreateScope<VulkanPipeline>(
@@ -65,8 +65,19 @@ namespace Gale {
 		VkExtent2D extent = { width, height };
 
 		vkDeviceWaitIdle(m_Device->device());
-		m_SwapChain = nullptr;
-		m_SwapChain = CreateScope<VulkanSwapChain>(m_Device, extent);
+
+		if (m_SwapChain == nullptr)
+			m_SwapChain = CreateScope<VulkanSwapChain>(m_Device, extent);
+		else
+		{
+			m_SwapChain = CreateScope<VulkanSwapChain>(m_Device, extent, std::move(m_SwapChain));
+			if (m_SwapChain->imageCount() != commandBuffers.size())
+			{
+				freeCommandBuffers();
+				createCommandBuffers();
+			}
+		}
+
 		createPipeline();
 	}
 
@@ -85,6 +96,13 @@ namespace Gale {
 			throw std::runtime_error("failed to allocate command buffers!");
 		}
 
+	}
+
+	void VulkanContext::freeCommandBuffers()
+	{
+		vkFreeCommandBuffers(m_Device->device(), m_Device->getCommandPool(),
+			static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+		commandBuffers.clear();
 	}
 
 	void VulkanContext::recordCommandBuffer(int imageIndex)
@@ -111,6 +129,17 @@ namespace Gale {
 		renderPassInfo.pClearValues = clearValues.data();
 
 		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		VkViewport viewport{};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(m_SwapChain->getSwapChainExtent().width);
+		viewport.height = static_cast<float>(m_SwapChain->getSwapChainExtent().height);
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		VkRect2D scissor{ {0, 0}, m_SwapChain->getSwapChainExtent() };
+		vkCmdSetViewport(commandBuffers[imageIndex], 0, 1, &viewport);
+		vkCmdSetScissor(commandBuffers[imageIndex], 0, 1, &scissor);
 
 		m_Pipeline->bind(commandBuffers[imageIndex]);
 

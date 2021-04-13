@@ -5,7 +5,20 @@
 namespace Gale {
 
 	VulkanSwapChain::VulkanSwapChain(Ref<VulkanDevice> deviceRef, VkExtent2D extent)
-		: device{ deviceRef }, windowExtent{ extent } {
+		: device{ deviceRef }, windowExtent{ extent }
+	{
+		init();
+	}
+
+	VulkanSwapChain::VulkanSwapChain(Ref<VulkanDevice> deviceRef, VkExtent2D extent, Ref<VulkanSwapChain> previous)
+		: device{ deviceRef }, windowExtent{ extent }, oldSwapChain{ previous }
+	{
+		init();
+		oldSwapChain = nullptr;
+	}
+
+	void VulkanSwapChain::init()
+	{
 		createSwapChain();
 		createImageViews();
 		createRenderPass();
@@ -111,7 +124,8 @@ namespace Gale {
 		return result;
 	}
 
-	void VulkanSwapChain::createSwapChain() {
+	void VulkanSwapChain::createSwapChain()
+	{
 		SwapChainSupportDetails swapChainSupport = device->getSwapChainSupport();
 
 		VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
@@ -155,7 +169,7 @@ namespace Gale {
 		createInfo.presentMode = presentMode;
 		createInfo.clipped = VK_TRUE;
 
-		createInfo.oldSwapchain = VK_NULL_HANDLE;
+		createInfo.oldSwapchain = oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
 		if (vkCreateSwapchainKHR(device->device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
 			throw std::runtime_error("failed to create swap chain!");
@@ -362,11 +376,14 @@ namespace Gale {
 		return availableFormats[0];
 	}
 
-	VkPresentModeKHR VulkanSwapChain::chooseSwapPresentMode(
-		const std::vector<VkPresentModeKHR>& availablePresentModes) {
-		for (const auto& availablePresentMode : availablePresentModes) {
-			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-				GL_INFO("Present mode: Mailbox");
+	VkPresentModeKHR VulkanSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) 
+	{
+		for (const auto& availablePresentMode : availablePresentModes)
+		{
+			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) 
+			{
+				if(oldSwapChain == nullptr)
+					GL_INFO("Present mode: Mailbox");
 				return availablePresentMode;
 			}
 		}
@@ -378,7 +395,8 @@ namespace Gale {
 		//   }
 		// }
 
-		GL_INFO("Present mode: V-Sync");
+		if (oldSwapChain == nullptr)
+			GL_INFO("Present mode: V-Sync");
 		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 

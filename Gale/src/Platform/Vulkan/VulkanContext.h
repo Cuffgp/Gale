@@ -25,6 +25,7 @@ namespace Gale
 		void createPipelineLayout();
 		void createPipeline();
 		void createCommandBuffers();
+		void freeCommandBuffers();
 		void recreateSwapChain(uint32_t width, uint32_t height);
 		void recordCommandBuffer(int imageIndex);
 
