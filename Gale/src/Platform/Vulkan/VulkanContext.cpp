@@ -161,6 +161,7 @@ namespace Gale {
 		uint32_t imageIndex;
 		auto result = m_SwapChain->acquireNextImage(&imageIndex);
 
+		/*
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
 			recreateSwapChain(static_cast<uint32_t>(m_Window->GetWidth()), static_cast<uint32_t>(m_Window->GetHeight()));
@@ -170,15 +171,18 @@ namespace Gale {
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
+		*/
 
 		recordCommandBuffer(imageIndex);
 		result = m_SwapChain->submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
 
+		/*
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 		{
 			recreateSwapChain(static_cast<uint32_t>(m_Window->GetWidth()), static_cast<uint32_t>(m_Window->GetHeight()));
 			return;
 		}
+		*/
 
 		if (result != VK_SUCCESS) {
 			throw std::runtime_error("failed to present swap chain image!");

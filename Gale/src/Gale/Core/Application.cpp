@@ -23,7 +23,8 @@ namespace Gale {
 		while (!m_Window->ShouldClose())
 		{
 			m_Window->PollEvents();
-			m_Context->drawFrame();
+			if (!m_minimized)
+				m_Context->drawFrame();
 		}
 
 		m_Context->waitIdle();
@@ -49,6 +50,13 @@ namespace Gale {
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 
+		if (width == 0 || height == 0)
+		{
+			m_minimized = true;
+			return false;
+		}
+
+		m_minimized = false;
 		m_Context->onWindowResize(width, height);
 
 		return false;

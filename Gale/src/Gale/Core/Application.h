@@ -25,6 +25,8 @@ namespace Gale {
 	private:
 
 		static Application* s_Instance;
+		bool m_running = true;
+		bool m_minimized = false;
 
 		Ref<WindowsWindow> m_Window;
 		Scope<VulkanContext> m_Context;
