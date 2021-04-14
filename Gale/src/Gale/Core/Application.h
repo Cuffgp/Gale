@@ -19,7 +19,13 @@ namespace Gale {
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 
+		static Application& Get() { return *s_Instance; }
+		WindowsWindow& GetWindow() { return *m_Window; }
+
 	private:
+
+		static Application* s_Instance;
+
 		Ref<WindowsWindow> m_Window;
 		Scope<VulkanContext> m_Context;
 	};
