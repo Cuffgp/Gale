@@ -8,8 +8,18 @@
 #include "VulkanPipeline.h"
 #include "VulkanSwapChain.h"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
 namespace Gale
 {
+	struct SimplePushConstantData
+	{
+		glm::vec2 offset;
+		alignas(16) glm::vec3 color;
+	};
+
 	class VulkanContext
 	{
 	public:

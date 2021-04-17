@@ -66,6 +66,8 @@ project "Gale"
         "ImGui",
         "%{LibraryDir.Vulkan}"
 	}
+    
+    --postbuildcommands { "call %{prj.name}/assets/compile.bat" }
 	
 
     filter "configurations:Debug"
