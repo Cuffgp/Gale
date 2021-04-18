@@ -71,7 +71,7 @@ namespace Gale {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonPressedEvent: " << m_Button;
+			ss << "MouseButtonPressedEvent: " << static_cast<int32_t>(m_Button);
 			return ss.str();
 		}
 
@@ -87,7 +87,7 @@ namespace Gale {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "MouseButtonReleasedEvent: " << m_Button;
+			ss << "MouseButtonReleasedEvent: " << static_cast<int32_t>(m_Button);
 			return ss.str();
 		}
 

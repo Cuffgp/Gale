@@ -1,7 +1,9 @@
 #pragma once
 #include "Gale/Core/Base.h"
+#include "Gale/Core/Timestep.h"
 #include "Gale/Events/Event.h"
 #include "Gale/Events/ApplicationEvent.h"
+
 
 #include "Platform/Windows/WindowsWindow.h"
 #include "Platform/Vulkan/VulkanContext.h"
@@ -16,6 +18,8 @@ namespace Gale {
 
 		void Run();
 		void OnEvent(Event& e);
+		void OnUpdate(Timestep ts);
+
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 
@@ -23,13 +27,16 @@ namespace Gale {
 		WindowsWindow& GetWindow() { return *m_Window; }
 
 	private:
+		Ref<WindowsWindow> m_Window;
+		Scope<VulkanContext> m_Context;
 
 		static Application* s_Instance;
 		bool m_running = true;
 		bool m_minimized = false;
 
-		Ref<WindowsWindow> m_Window;
-		Scope<VulkanContext> m_Context;
+		Timestep m_Timestep;
+		float m_LastFrameTime = 0.0f;
+
 	};
 
 }

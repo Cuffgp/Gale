@@ -1,12 +1,16 @@
 #include "glpch.h"
 
 #include "Application.h"
-
+#include "Platform/Windows/Input.h"
 
 namespace Gale {
 
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application()
 	{
+		s_Instance = this;
+
 		m_Window = CreateRef<WindowsWindow>();
 		m_Window->SetEventCallback(GL_BIND_EVENT_FN(Application::OnEvent));
 
@@ -22,8 +26,13 @@ namespace Gale {
 	{
 		while (!m_Window->ShouldClose())
 		{
+			float time = m_Window->GetTime();
+			m_Timestep.Set(time - m_LastFrameTime);
+			m_LastFrameTime = time;
+
 			m_Window->PollEvents();
 			if (!m_minimized)
+				OnUpdate(m_Timestep);
 				m_Context->drawFrame();
 		}
 
@@ -38,6 +47,11 @@ namespace Gale {
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(GL_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(GL_BIND_EVENT_FN(Application::OnWindowResize));
+	}
+
+	void Application::OnUpdate(Timestep ts)
+	{
+
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)
