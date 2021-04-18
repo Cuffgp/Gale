@@ -21,6 +21,7 @@ IncludeDir["GLFW"] = "Gale/vendor/glfw/include"
 IncludeDir["ImGui"] = "Gale/vendor/imgui"
 IncludeDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Include"
 IncludeDir["glm"] = "Gale/vendor/glm"
+IncludeDir["tinyobjloader"] = "Gale/vendor/tinyobjloader"
 
 LibraryDir = {}
 LibraryDir["Vulkan"] = "C:/VulkanSDK/1.2.170.0/Lib/vulkan-1.lib"
@@ -57,6 +58,7 @@ project "Gale"
         "%{IncludeDir.ImGui}",
 		"%{IncludeDir.Vulkan}",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.tinyobjloader}",
 		"%{prj.name}/vendor"
 	}
 	

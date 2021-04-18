@@ -64,8 +64,8 @@ namespace Gale {
 		pipelineConfig.pipelineLayout = pipelineLayout;
 		m_Pipeline = CreateScope<VulkanPipeline>(
 			m_Device,
-			"assets/shader.vert.spv",
-			"assets/shader.frag.spv",
+			"assets/shaders/shader.vert.spv",
+			"assets/shaders/shader.frag.spv",
 			pipelineConfig);
 	}
 
