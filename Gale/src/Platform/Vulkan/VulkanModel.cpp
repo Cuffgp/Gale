@@ -5,11 +5,54 @@
 #include <cassert>
 #include <cstring>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
 namespace Gale {
 
 	VulkanModel::VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices,
 		const std::vector<uint32_t>& indices) : m_Device{ device }
 	{
+		createVertexBuffers(vertices);
+		createIndexBuffers(indices);
+	}
+
+	VulkanModel::VulkanModel(Ref<VulkanDevice> device, const std::string& objFilepath) : m_Device{ device }
+	{
+
+		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
+
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string err;
+
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, objFilepath.c_str())) 
+		{
+			GL_ERROR(err);
+		}
+
+		for (const auto& shape : shapes) 
+		{
+			for (const auto& index : shape.mesh.indices)
+			{
+				Vertex vertex{};
+
+				vertex.position = 
+				{
+					attrib.vertices[3 * index.vertex_index + 0],
+					attrib.vertices[3 * index.vertex_index + 1],
+					attrib.vertices[3 * index.vertex_index + 2]
+				};
+
+				vertex.color = { 0.8f, 0.4f , 0.6f };
+
+				vertices.push_back(vertex);
+				indices.push_back(indices.size());
+			}
+		}
+
 		createVertexBuffers(vertices);
 		createIndexBuffers(indices);
 	}

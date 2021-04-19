@@ -19,14 +19,22 @@ namespace Gale {
 	public:
 		struct Vertex 
 		{
-			glm::vec2 position;
+			glm::vec3 position;
 			glm::vec3 color;
 
 			static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
 			static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
 		};
 
+		struct Uniform
+		{
+			glm::mat4 model;
+			glm::mat4 view;
+			glm::mat4 proj;
+		};
+
 		VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+		VulkanModel(Ref<VulkanDevice> device, const std::string& objFilepath);
 		~VulkanModel();
 
 		VulkanModel(const VulkanModel&) = delete;
@@ -40,6 +48,7 @@ namespace Gale {
 		void createIndexBuffers(const std::vector<uint32_t>& indices);
 
 		Ref<VulkanDevice> m_Device;
+
 		VkBuffer vertexBuffer;
 		VkDeviceMemory vertexBufferMemory;
 		uint32_t vertexCount;

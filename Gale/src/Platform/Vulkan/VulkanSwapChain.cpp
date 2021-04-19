@@ -378,6 +378,8 @@ namespace Gale {
 
 	VkPresentModeKHR VulkanSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) 
 	{
+		/*
+		
 		for (const auto& availablePresentMode : availablePresentModes)
 		{
 			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) 
@@ -388,12 +390,15 @@ namespace Gale {
 			}
 		}
 
-		// for (const auto &availablePresentMode : availablePresentModes) {
-		//   if (availablePresentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
-		//     GL_INFO("Present mode: Immediate");
-		//     return availablePresentMode;
-		//   }
-		// }
+		for (const auto &availablePresentMode : availablePresentModes)
+		{
+			if (availablePresentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+				GL_INFO("Present mode: Immediate");
+				return availablePresentMode;
+			}
+		}
+
+		*/
 
 		if (oldSwapChain == nullptr)
 			GL_INFO("Present mode: V-Sync");

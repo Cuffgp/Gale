@@ -30,6 +30,8 @@ namespace Gale {
 			m_Timestep.Set(time - m_LastFrameTime);
 			m_LastFrameTime = time;
 
+			//GL_INFO("Framerate: {}", 1 / m_Timestep.GetSeconds());
+
 			m_Window->PollEvents();
 			if (!m_minimized)
 				OnUpdate(m_Timestep);
