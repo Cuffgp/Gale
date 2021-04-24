@@ -9,6 +9,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
+
 // std
 #include <vector>
 
@@ -26,14 +27,8 @@ namespace Gale {
 			static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
 		};
 
-		struct Uniform
-		{
-			glm::mat4 model;
-			glm::mat4 view;
-			glm::mat4 proj;
-		};
-
-		VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+		VulkanModel(Ref<VulkanDevice> device, const std::vector<Vertex>& vertices,
+			const std::vector<uint32_t>& indices);
 		VulkanModel(Ref<VulkanDevice> device, const std::string& objFilepath);
 		~VulkanModel();
 
@@ -56,5 +51,6 @@ namespace Gale {
 		VkBuffer indexBuffer;
 		VkDeviceMemory indexBufferMemory;
 		uint32_t indexCount;
+
 	};
 }

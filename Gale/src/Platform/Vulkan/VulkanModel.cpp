@@ -1,12 +1,12 @@
 #include "glpch.h"
 #include "VulkanModel.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
 // std
 #include <cassert>
 #include <cstring>
-
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
 
 namespace Gale {
 
