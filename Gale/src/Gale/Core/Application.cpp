@@ -33,9 +33,12 @@ namespace Gale {
 			//GL_INFO("Framerate: {}", 1 / m_Timestep.GetSeconds());
 
 			m_Window->PollEvents();
+
 			if (!m_minimized)
+			{
 				OnUpdate(m_Timestep);
 				m_Context->drawFrame();
+			}
 		}
 
 		m_Context->waitIdle();
@@ -63,6 +66,8 @@ namespace Gale {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		GL_INFO("Event: {}", e.ToString());
+
 		uint32_t width = e.GetWidth();
 		uint32_t height = e.GetHeight();
 
