@@ -27,38 +27,42 @@ namespace Gale {
 		createSyncObjects();
 	}
 
-	VulkanSwapChain::~VulkanSwapChain() {
-		for (auto imageView : swapChainImageViews) {
+	VulkanSwapChain::~VulkanSwapChain() 
+	{
+		for (auto imageView : swapChainImageViews)
 			vkDestroyImageView(device->device(), imageView, nullptr);
-		}
+		
 		swapChainImageViews.clear();
 
-		if (swapChain != nullptr) {
+		if (swapChain != nullptr) 
+		{
 			vkDestroySwapchainKHR(device->device(), swapChain, nullptr);
 			swapChain = nullptr;
 		}
 
-		for (int i = 0; i < depthImages.size(); i++) {
+		for (int i = 0; i < depthImages.size(); i++) 
+		{
 			vkDestroyImageView(device->device(), depthImageViews[i], nullptr);
 			vkDestroyImage(device->device(), depthImages[i], nullptr);
 			vkFreeMemory(device->device(), depthImageMemorys[i], nullptr);
 		}
 
-		for (auto framebuffer : swapChainFramebuffers) {
+		for (auto framebuffer : swapChainFramebuffers)
 			vkDestroyFramebuffer(device->device(), framebuffer, nullptr);
-		}
 
 		vkDestroyRenderPass(device->device(), renderPass, nullptr);
 
 		// cleanup synchronization objects
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
+		{
 			vkDestroySemaphore(device->device(), renderFinishedSemaphores[i], nullptr);
 			vkDestroySemaphore(device->device(), imageAvailableSemaphores[i], nullptr);
 			vkDestroyFence(device->device(), inFlightFences[i], nullptr);
 		}
 	}
 
-	VkResult VulkanSwapChain::acquireNextImage(uint32_t* imageIndex) {
+	VkResult VulkanSwapChain::acquireNextImage(uint32_t* imageIndex)
+	{
 		vkWaitForFences(
 			device->device(),
 			1,
@@ -77,10 +81,11 @@ namespace Gale {
 		return result;
 	}
 
-	VkResult VulkanSwapChain::submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex) {
-		if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
+	VkResult VulkanSwapChain::submitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex)
+	{
+		if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE)
 			vkWaitForFences(device->device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
-		}
+		
 		imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
 
 		VkSubmitInfo submitInfo = {};
@@ -100,10 +105,8 @@ namespace Gale {
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
 		vkResetFences(device->device(), 1, &inFlightFences[currentFrame]);
-		if (vkQueueSubmit(device->graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
-			VK_SUCCESS) {
+		if (vkQueueSubmit(device->graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
 			throw std::runtime_error("failed to submit draw command buffer!");
-		}
 
 		VkPresentInfoKHR presentInfo = {};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -134,7 +137,8 @@ namespace Gale {
 
 		uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
 		if (swapChainSupport.capabilities.maxImageCount > 0 &&
-			imageCount > swapChainSupport.capabilities.maxImageCount) {
+			imageCount > swapChainSupport.capabilities.maxImageCount) 
+		{
 			imageCount = swapChainSupport.capabilities.maxImageCount;
 		}
 
@@ -152,12 +156,14 @@ namespace Gale {
 		QueueFamilyIndices indices = device->findPhysicalQueueFamilies();
 		uint32_t queueFamilyIndices[] = { indices.graphicsFamily, indices.presentFamily };
 
-		if (indices.graphicsFamily != indices.presentFamily) {
+		if (indices.graphicsFamily != indices.presentFamily)
+		{
 			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 			createInfo.queueFamilyIndexCount = 2;
 			createInfo.pQueueFamilyIndices = queueFamilyIndices;
 		}
-		else {
+		else 
+		{
 			createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 			createInfo.queueFamilyIndexCount = 0;      // Optional
 			createInfo.pQueueFamilyIndices = nullptr;  // Optional
@@ -171,9 +177,8 @@ namespace Gale {
 
 		createInfo.oldSwapchain = oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
-		if (vkCreateSwapchainKHR(device->device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+		if (vkCreateSwapchainKHR(device->device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS)
 			throw std::runtime_error("failed to create swap chain!");
-		}
 
 		// we only specified a minimum number of images in the swap chain, so the implementation is
 		// allowed to create a swap chain with more. That's why we'll first query the final number of
@@ -187,9 +192,11 @@ namespace Gale {
 		swapChainExtent = extent;
 	}
 
-	void VulkanSwapChain::createImageViews() {
+	void VulkanSwapChain::createImageViews()
+	{
 		swapChainImageViews.resize(swapChainImages.size());
-		for (size_t i = 0; i < swapChainImages.size(); i++) {
+		for (size_t i = 0; i < swapChainImages.size(); i++)
+		{
 			VkImageViewCreateInfo viewInfo{};
 			viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 			viewInfo.image = swapChainImages[i];
@@ -201,14 +208,13 @@ namespace Gale {
 			viewInfo.subresourceRange.baseArrayLayer = 0;
 			viewInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(device->device(), &viewInfo, nullptr, &swapChainImageViews[i]) !=
-				VK_SUCCESS) {
+			if (vkCreateImageView(device->device(), &viewInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS)
 				throw std::runtime_error("failed to create texture image view!");
-			}
 		}
 	}
 
-	void VulkanSwapChain::createRenderPass() {
+	void VulkanSwapChain::createRenderPass() 
+	{
 		VkAttachmentDescription depthAttachment{};
 		depthAttachment.format = findDepthFormat();
 		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -262,12 +268,12 @@ namespace Gale {
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(device->device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+		if (vkCreateRenderPass(device->device(), &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
 			throw std::runtime_error("failed to create render pass!");
-		}
 	}
 
-	void VulkanSwapChain::createFramebuffers() {
+	void VulkanSwapChain::createFramebuffers() 
+	{
 		swapChainFramebuffers.resize(imageCount());
 		for (size_t i = 0; i < imageCount(); i++) {
 			std::array<VkImageView, 2> attachments = { swapChainImageViews[i], depthImageViews[i] };
@@ -286,13 +292,15 @@ namespace Gale {
 				device->device(),
 				&framebufferInfo,
 				nullptr,
-				&swapChainFramebuffers[i]) != VK_SUCCESS) {
+				&swapChainFramebuffers[i]) != VK_SUCCESS) 
+			{
 				throw std::runtime_error("failed to create framebuffer!");
 			}
 		}
 	}
 
-	void VulkanSwapChain::createDepthResources() {
+	void VulkanSwapChain::createDepthResources() 
+	{
 		VkFormat depthFormat = findDepthFormat();
 		VkExtent2D swapChainExtent = getSwapChainExtent();
 
@@ -300,7 +308,8 @@ namespace Gale {
 		depthImageMemorys.resize(imageCount());
 		depthImageViews.resize(imageCount());
 
-		for (int i = 0; i < depthImages.size(); i++) {
+		for (int i = 0; i < depthImages.size(); i++)
+		{
 			VkImageCreateInfo imageInfo{};
 			imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 			imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -353,22 +362,26 @@ namespace Gale {
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
+		{
 			if (vkCreateSemaphore(device->device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) !=
 				VK_SUCCESS ||
 				vkCreateSemaphore(device->device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
 				VK_SUCCESS ||
-				vkCreateFence(device->device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+				vkCreateFence(device->device(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) 
+			{
 				throw std::runtime_error("failed to create synchronization objects for a frame!");
 			}
 		}
 	}
 
-	VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(
-		const std::vector<VkSurfaceFormatKHR>& availableFormats) {
-		for (const auto& availableFormat : availableFormats) {
+	VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
+	{
+		for (const auto& availableFormat : availableFormats) 
+		{
 			if (availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM &&
-				availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+				availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+			{
 				return availableFormat;
 			}
 		}
@@ -378,7 +391,6 @@ namespace Gale {
 
 	VkPresentModeKHR VulkanSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) 
 	{
-		/*
 		
 		for (const auto& availablePresentMode : availablePresentModes)
 		{
@@ -398,7 +410,6 @@ namespace Gale {
 			}
 		}
 
-		*/
 
 		if (oldSwapChain == nullptr)
 			GL_INFO("Present mode: V-Sync");

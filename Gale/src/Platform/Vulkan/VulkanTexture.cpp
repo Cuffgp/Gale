@@ -11,12 +11,18 @@ namespace Gale {
 		m_Device(device)
 	{
 		createTexture(texFilepath);
+		createTextureImageView();
+		createTextureSampler();
+		setDescriptor();
 	}
 
 	VulkanTexture::~VulkanTexture()
 	{
 		vkDestroyBuffer(m_Device->device(), textureBuffer, nullptr);
 		vkFreeMemory(m_Device->device(), textureBufferMemory, nullptr);
+
+		vkDestroySampler(m_Device->device(), textureSampler, nullptr);
+		vkDestroyImageView(m_Device->device(), textureImageView, nullptr);
 		vkDestroyImage(m_Device->device(), textureImage, nullptr);
 		vkFreeMemory(m_Device->device(), textureImageMemory, nullptr);
 	}
@@ -69,6 +75,9 @@ namespace Gale {
 		transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 		m_Device->copyBufferToImage(textureBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), 1);
+
+		transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
 	}
 
 	void VulkanTexture::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
@@ -140,7 +149,44 @@ namespace Gale {
 
 		if (vkCreateImageView(m_Device->device(), &viewInfo, nullptr, &textureImageView) != VK_SUCCESS)
 			GL_ERROR("failed to create texture image view!");
+	}
 
+	void VulkanTexture::createTextureSampler()
+	{
+		VkPhysicalDeviceProperties properties{};
+		vkGetPhysicalDeviceProperties(m_Device->getPhysicalDevice(), &properties);
+
+		VkSamplerCreateInfo samplerInfo{};
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.magFilter = VK_FILTER_LINEAR;
+		samplerInfo.minFilter = VK_FILTER_LINEAR;
+		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		//samplerInfo.anisotropyEnable = VK_TRUE;
+		//samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+		samplerInfo.anisotropyEnable = VK_FALSE;
+		samplerInfo.maxAnisotropy = 1.0f;
+		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+		samplerInfo.unnormalizedCoordinates = VK_FALSE;
+		samplerInfo.compareEnable = VK_FALSE;
+		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		samplerInfo.mipLodBias = 0.0f;
+		samplerInfo.minLod = 0.0f;
+		samplerInfo.maxLod = 0.0f;
+
+		if (vkCreateSampler(m_Device->device(), &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS)
+			GL_ERROR("failed to create texture sampler!");
+	}
+
+	void VulkanTexture::setDescriptor()
+	{
+		samplerLayoutBinding.binding = 1;
+		samplerLayoutBinding.descriptorCount = 1;
+		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		samplerLayoutBinding.pImmutableSamplers = nullptr;
+		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 	}
 
 }
