@@ -187,10 +187,10 @@ namespace Gale {
 		//pipelineLayoutInfo.setLayoutCount = 0;
 		//pipelineLayoutInfo.pSetLayouts = nullptr;
 
-		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
-		//pipelineLayoutInfo.pushConstantRangeCount = 0;
-		//pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		//pipelineLayoutInfo.pushConstantRangeCount = 1;
+		//pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
+		pipelineLayoutInfo.pushConstantRangeCount = 0;
+		pipelineLayoutInfo.pPushConstantRanges = nullptr;
 		if (vkCreatePipelineLayout(m_Device->device(), &pipelineLayoutInfo, nullptr, &pipelineLayout) !=
 			VK_SUCCESS) {
 			throw std::runtime_error("failed to create pipeline layout!");
@@ -300,11 +300,11 @@ namespace Gale {
 
 		float time = m_Window->GetTime();
 
-
+		/*
 		SimplePushConstantData push{};
 		//push.projection = glm::ortho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 		//push.view = glm::rotate(glm::mat4(1.0f), time, glm::vec3(0.0f, 1.0f, 0.0f));
-
+		
 		vkCmdPushConstants(
 			commandBuffers[imageIndex],
 			pipelineLayout,
@@ -312,6 +312,7 @@ namespace Gale {
 			0,
 			sizeof(SimplePushConstantData),
 			&push);
+		*/
 
 
 		vkCmdBindDescriptorSets(commandBuffers[imageIndex], VK_PIPELINE_BIND_POINT_GRAPHICS,

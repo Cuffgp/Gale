@@ -7,11 +7,13 @@ layout (location = 0) out vec4 outColor;
 
 layout(binding = 1) uniform sampler2D texSampler;
 
+/*
 layout(push_constant) uniform Push {
   mat4 model;
   mat4 view;
   mat4 projection;
 } push;
+*/
 
 void main() {
   outColor = texture(texSampler, fragTexCoord);
