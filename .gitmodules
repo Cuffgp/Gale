@@ -1,0 +1,3 @@
+[submodule "Gale/vendor/glfw"]
+	path = Gale/vendor/glfw
+	url = https://github.com/TheCherno/glfw
