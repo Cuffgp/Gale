@@ -6,6 +6,7 @@
 #include "Gale/DirectX/DirectXVertexBuffer.h"
 #include "Gale/DirectX/DirectXIndexBuffer.h"
 #include "Gale/DirectX/DirectXUniformBuffer.h"
+#include "Gale/DirectX/DirectXDescriptorSet.h"
 
 namespace Gale {
 
@@ -135,10 +136,12 @@ namespace Gale {
 
 	void DirectXRenderer::BindDescriptorSet(Ref<DescriptorSet> descriptorSet)
 	{
-		//ID3D12DescriptorHeap* ppHeaps[] = { m_cbvHeap.Get() };
-		//m_CommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+		auto heap = std::static_pointer_cast<DirectXDescriptorSet>(descriptorSet)->GetUniformHeap();
 
-		//m_CommandList->SetGraphicsRootDescriptorTable(0, m_cbvHeap->GetGPUDescriptorHandleForHeapStart());
+		ID3D12DescriptorHeap* ppHeaps[] = { heap };
+		m_CommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+		m_CommandList->SetGraphicsRootDescriptorTable(1, heap->GetGPUDescriptorHandleForHeapStart());
 	}
 
 	void DirectXRenderer::DrawIndexed(uint32_t indexCount)

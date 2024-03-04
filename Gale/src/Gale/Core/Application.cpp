@@ -1,5 +1,6 @@
 #include "glpch.h"
 
+#include "Gale/Core/Utilities.h"
 #include "Gale/Core/Application.h"
 #include "Gale/Renderer/Renderer.h"
 #include "Gale/Renderer/Camera.h"
@@ -71,6 +72,7 @@ namespace Gale {
 
 
 		GL_INFO("Index Count {}", m_IndexBuffer->GetIndexCount());
+
 	}
 	
 	Application::~Application()
@@ -107,7 +109,6 @@ namespace Gale {
 			Renderer::BindVertexBuffer(m_VertexBuffer);
 			Renderer::BindIndexBuffer(m_IndexBuffer);
 
-			Renderer::BindUniformBuffer(m_UniformBuffer);
 			Renderer::BindDescriptorSet(m_ConstantSet);
 
 			Renderer::SetTransform(camera.GetProjectionView() * translation * rotation);

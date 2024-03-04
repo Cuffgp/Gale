@@ -19,7 +19,7 @@ private:
 
 Gale::Application* Gale::CreateApplication()
 {
-	Gale::RendererAPI::Set(RendererAPI::API::Vulkan);
+	Gale::RendererAPI::Set(RendererAPI::API::DirectX);
 
 	if (Gale::RendererAPI::Current() == Gale::RendererAPI::API::Vulkan)
 		Gale::VulkanDevice::Init();

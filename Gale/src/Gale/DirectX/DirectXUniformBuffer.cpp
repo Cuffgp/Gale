@@ -1,5 +1,8 @@
 #include "glpch.h"
 
+#include "Gale/Core/Utilities.h"
+
+#include "Gale/DirectX/DirectXDescriptorSet.h"
 #include "Gale/DirectX/DirectXUniformBuffer.h"
 
 namespace Gale {
@@ -9,19 +12,11 @@ namespace Gale {
 	{
 		auto device = DirectXDevice::Get().Device();
 
-		m_Buffer = CreateScope<DirectXBuffer>(size, D3D12_HEAP_TYPE_UPLOAD);
+		m_AlignedSize = Utils::AlignedSize(size, 256);
 
-		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc = {};
-		cbvHeapDesc.NumDescriptors = 1;
-		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		m_Buffer = CreateScope<DirectXBuffer>(m_AlignedSize, D3D12_HEAP_TYPE_UPLOAD);
 
-		device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_DescriptorHeap));
 
-		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-		cbvDesc.BufferLocation = m_Buffer->GetBuffer()->GetGPUVirtualAddress();
-		cbvDesc.SizeInBytes = m_Size;
-		device->CreateConstantBufferView(&cbvDesc, m_DescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 	}
 
 	DirectXUniformBuffer::~DirectXUniformBuffer()
@@ -32,11 +27,18 @@ namespace Gale {
 	void DirectXUniformBuffer::SetData(void* data)
 	{
 		m_Buffer->Map();
-		m_Buffer->WriteToBuffer(data);
+		m_Buffer->WriteToBuffer(data, m_AlignedSize);
 	}
 
 	void DirectXUniformBuffer::Write(Ref<DescriptorSet> descriptorSet)
 	{
+		auto device = DirectXDevice::Get().Device();
+		auto heap = std::static_pointer_cast<DirectXDescriptorSet>(descriptorSet)->GetUniformHeap();
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+		cbvDesc.BufferLocation = m_Buffer->GetBuffer()->GetGPUVirtualAddress();
+		cbvDesc.SizeInBytes = m_AlignedSize;
+		device->CreateConstantBufferView(&cbvDesc, heap->GetCPUDescriptorHandleForHeapStart());
 
 	}
 

@@ -34,14 +34,18 @@ namespace Gale {
 		ID3DBlob* signature;
 		ID3DBlob* error;
 
-		CD3DX12_DESCRIPTOR_RANGE ranges[1];
-		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
+		D3D12_DESCRIPTOR_RANGE  descriptorTableRanges[1]; // only one range right now
+		descriptorTableRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV; // this is a range of constant buffer views (descriptors)
+		descriptorTableRanges[0].NumDescriptors = 1; // we only have one constant buffer, so the range is only 1
+		descriptorTableRanges[0].BaseShaderRegister = 0; // start index of the shader registers in the range
+		descriptorTableRanges[0].RegisterSpace = 0; // space 0. can usually be zero
+		descriptorTableRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 		CD3DX12_ROOT_PARAMETER rootParameters[2]{};
 
 		rootParameters[0].InitAsConstants(sizeof(glm::mat4) / 4, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 		//rootParameters[1].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
-		rootParameters[1].InitAsDescriptorTable(1, &ranges[0], D3D12_SHADER_VISIBILITY_PIXEL);
+		rootParameters[1].InitAsDescriptorTable(1, &descriptorTableRanges[0], D3D12_SHADER_VISIBILITY_PIXEL);
 
 		// Allow input layout and vertex shader and deny unnecessary access to certain pipeline stages.
 		const D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =

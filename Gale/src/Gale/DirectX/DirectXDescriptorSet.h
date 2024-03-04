@@ -2,6 +2,8 @@
 
 #include "Gale/Renderer/DescriptorSet.h"
 
+#include "Gale/DirectX/DirectXDevice.h"
+
 namespace Gale {
 
 	class DirectXDescriptorSet : public DescriptorSet
@@ -10,9 +12,11 @@ namespace Gale {
 		DirectXDescriptorSet(std::vector<ShaderDescriptor> descriptors);
 		~DirectXDescriptorSet();
 
-		virtual void Bind() override;
+		ID3D12DescriptorHeap* GetUniformHeap() { return m_UniformHeap; }
 	private:
+		DescriptorMap m_DescriptorMap;
 
+		ID3D12DescriptorHeap* m_UniformHeap;
 	};
 
 }

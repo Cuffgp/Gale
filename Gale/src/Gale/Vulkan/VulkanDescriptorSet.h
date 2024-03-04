@@ -12,8 +12,6 @@ namespace Gale {
 		VulkanDescriptorSet(std::vector<ShaderDescriptor> descriptors);
 		~VulkanDescriptorSet();
 
-		virtual void Bind() override;
-
 		VkDescriptorSet GetDescriptorSet() { return m_DescriptorSet; }
 	private:
 

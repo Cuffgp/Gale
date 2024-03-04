@@ -4,9 +4,15 @@
 
 namespace Gale {
 
-	DirectXBuffer::DirectXBuffer(uint32_t size, D3D12_HEAP_TYPE type):
-		m_Size(size)
+	DirectXBuffer::DirectXBuffer(uint32_t size, D3D12_HEAP_TYPE type, uint32_t alignedSize):
+		m_Size(size), m_AlignedSize(alignedSize)
 	{
+		if (alignedSize == 0)
+		{
+			m_AlignedSize = size;
+		}
+
+
 		auto device = DirectXDevice::Get().Device();
 
 		D3D12_HEAP_PROPERTIES heapProps;
@@ -19,7 +25,7 @@ namespace Gale {
 		D3D12_RESOURCE_DESC resourceDesc;
 		resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 		resourceDesc.Alignment = 0;
-		resourceDesc.Width = size;
+		resourceDesc.Width = m_AlignedSize;
 		resourceDesc.Height = 1;
 		resourceDesc.DepthOrArraySize = 1;
 		resourceDesc.MipLevels = 1;
@@ -65,7 +71,7 @@ namespace Gale {
 		m_Mapped = nullptr;
 	}
 
-	void DirectXBuffer::WriteToBuffer(void* data)
+	void DirectXBuffer::WriteToBuffer(void* data, uint32_t size)
 	{
 		if (!m_Mapped)
 		{
@@ -73,7 +79,10 @@ namespace Gale {
 		}
 
 		GL_ASSERT(m_Mapped, "Memory must be mapped to write");
-		memcpy(m_Mapped, data, m_Size);
+		if (size == 0)
+			memcpy(m_Mapped, data, m_Size);
+		else
+			memcpy(m_Mapped, data, size);
 	}
 
 }

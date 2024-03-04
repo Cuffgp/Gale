@@ -20,7 +20,7 @@ namespace Gale {
 	private:
 		Scope<DirectXBuffer> m_Buffer;
 		uint32_t m_Size;
-		ID3D12DescriptorHeap* m_DescriptorHeap;
+		uint32_t m_AlignedSize;
 	};
 
 }

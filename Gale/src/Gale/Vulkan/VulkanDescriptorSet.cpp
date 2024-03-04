@@ -21,11 +21,6 @@ namespace Gale {
 		vkDestroyDescriptorSetLayout(device, m_Layout, nullptr);
 	}
 
-	void VulkanDescriptorSet::Bind()
-	{
-
-	}
-
 	void VulkanDescriptorSet::CreateDescriptorSetLayout()
 	{
 		auto device = VulkanDevice::Get().Device();
