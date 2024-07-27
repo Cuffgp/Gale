@@ -2,6 +2,7 @@
 
 #include "Gale/Core/Utilities.h"
 
+#include "Gale/DirectX/DirectXRenderer.h"
 #include "Gale/DirectX/DirectXDescriptorSet.h"
 #include "Gale/DirectX/DirectXUniformBuffer.h"
 
@@ -14,7 +15,7 @@ namespace Gale {
 
 		m_AlignedSize = Utils::AlignedSize(size, 256);
 
-		m_Buffer = CreateScope<DirectXBuffer>(m_AlignedSize, D3D12_HEAP_TYPE_UPLOAD);
+		m_Buffer = CreateScope<DirectXBuffer>(m_AlignedSize, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
 	}
@@ -33,13 +34,14 @@ namespace Gale {
 	void DirectXUniformBuffer::Write(Ref<DescriptorSet> descriptorSet)
 	{
 		auto device = DirectXDevice::Get().Device();
-		auto heap = std::static_pointer_cast<DirectXDescriptorSet>(descriptorSet)->GetUniformHeap();
+		//auto heap = std::static_pointer_cast<DirectXDescriptorSet>(descriptorSet)->GetUniformHeap();
+		auto heap = DirectXRenderer::DescriptorHeap->UniformHeap();
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
 		cbvDesc.BufferLocation = m_Buffer->GetBuffer()->GetGPUVirtualAddress();
 		cbvDesc.SizeInBytes = m_AlignedSize;
 		device->CreateConstantBufferView(&cbvDesc, heap->GetCPUDescriptorHandleForHeapStart());
-
+		
 	}
 
 }

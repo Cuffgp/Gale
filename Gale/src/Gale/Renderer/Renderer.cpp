@@ -55,14 +55,9 @@ namespace Gale {
 		s_Renderer->BindIndexBuffer(indexBuffer);
 	}
 
-	void Renderer::BindUniformBuffer(Ref<UniformBuffer> uniformBuffer)
+	void Renderer::BindDescriptorSet(Ref<DescriptorSet> descriptorSet, uint32_t index)
 	{
-		s_Renderer->BindUniformBuffer(uniformBuffer);
-	}
-
-	void Renderer::BindDescriptorSet(Ref<DescriptorSet> descriptorSet)
-	{
-		s_Renderer->BindDescriptorSet(descriptorSet);
+		s_Renderer->BindDescriptorSet(descriptorSet, index);
 	}
 
 	void Renderer::DrawIndexed(uint32_t indexCount)

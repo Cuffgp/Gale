@@ -13,6 +13,7 @@ namespace Gale {
 	{
 	public:
 		VulkanPipeline(std::string filepath);
+		VulkanPipeline(std::string filepath, DescriptorSetMap descriptorSetMap);
 		VulkanPipeline(std::string vertPath, std::string fragPath);
 		~VulkanPipeline();
 

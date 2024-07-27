@@ -12,10 +12,12 @@ namespace Gale {
 	{
 	public:
 		DirectXPipeline(const std::string& filepath);
+		DirectXPipeline(const std::string& filepath, DescriptorSetMap descriptorSetMap);
 		DirectXPipeline(const std::string& vertPath, const std::string& fragPath);
 		~DirectXPipeline();
 
 		void CreateRootSignature();
+		void CreateRootSignature(DescriptorSetMap descriptorSetMap);
 		void CreatePipeline();
 
 		ID3D12PipelineState* GetState() { return m_PipelineState; }
@@ -24,6 +26,7 @@ namespace Gale {
 		std::string m_Filepath;
 		Scope<DirectXShader> m_Shader;
 		VertexInput m_Input;
+		DescriptorSetMap m_DescriptorSetMap;
 
 		ID3D12PipelineState* m_PipelineState;
 		static ID3D12RootSignature* m_RootSignature;

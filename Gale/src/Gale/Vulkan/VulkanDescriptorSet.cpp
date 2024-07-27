@@ -15,6 +15,14 @@ namespace Gale {
 		CreateDescriptorSet();
 	}
 
+	VulkanDescriptorSet::VulkanDescriptorSet(DescriptorMap descriptorMap)
+	{
+		m_DescriptorMap = descriptorMap;
+
+		CreateDescriptorSetLayout();
+		CreateDescriptorSet();
+	}
+
 	VulkanDescriptorSet::~VulkanDescriptorSet()
 	{
 		auto device = VulkanDevice::Get().Device();

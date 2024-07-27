@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DirectX.h"
+#include "Gale/DirectX/DirectXDescriptorHeap.h"
 
 namespace Gale {
 
@@ -24,12 +25,19 @@ namespace Gale {
 		// Helper functions
 		ID3D12GraphicsCommandList* BeginSingleTimeCommands();
 		void EndSingleTimeCommands(ID3D12GraphicsCommandList* commandList);
+		void CopyBuffer(ID3D12Resource* srcBuffer, ID3D12Resource* dstBuffer, uint32_t size);
+		void CopyAndTransitionBuffer(
+			ID3D12Resource* srcBuffer,
+			ID3D12Resource* dstBuffer,
+			uint32_t size,
+			D3D12_RESOURCE_STATES state);
 	private:
 		DirectXDevice();
 		~DirectXDevice();
 
 		void CreateAdaptor();
 		void CreateDevice();
+
 	private:
 
 		ID3D12Debug1* m_DebugController = nullptr;

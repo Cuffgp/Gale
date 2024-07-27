@@ -4,6 +4,7 @@
 
 #include "Gale/Vulkan/VulkanDevice.h"
 #include "Gale/Vulkan/VulkanSwapchain.h"
+#include "Gale/Vulkan/VulkanPipeline.h"
 
 namespace Gale {
 
@@ -23,8 +24,7 @@ namespace Gale {
 		virtual void BindPipeline(Ref<Pipeline> pipeline) override;
 		virtual void BindVertexBuffer(Ref<VertexBuffer> vertexBuffer) override;
 		virtual void BindIndexBuffer(Ref<IndexBuffer> indexBuffer) override;
-		virtual void BindUniformBuffer(Ref<UniformBuffer> uniformBuffer) override;
-		virtual void BindDescriptorSet(Ref<DescriptorSet> descriptorSet) override;
+		virtual void BindDescriptorSet(Ref<DescriptorSet> descriptorSet, uint32_t index) override;
 
 		virtual void DrawIndexed(uint32_t indexCount) override;
 
@@ -39,7 +39,7 @@ namespace Gale {
 		static uint32_t MaxFramesInFlight;
 
 	private:
-		Ref<Pipeline> m_LatestPipeline;
+		Ref<VulkanPipeline> m_LatestPipeline;
 		VkPipelineLayout m_LatestLayout;
 
 		Scope<VulkanSwapchain> m_Swapchain;

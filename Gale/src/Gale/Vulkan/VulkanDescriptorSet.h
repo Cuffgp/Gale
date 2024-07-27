@@ -10,7 +10,10 @@ namespace Gale {
 	{
 	public:
 		VulkanDescriptorSet(std::vector<ShaderDescriptor> descriptors);
+		VulkanDescriptorSet(DescriptorMap descriptorMap);
 		~VulkanDescriptorSet();
+
+		virtual DescriptorMap& GetDescriptorMap() override { return m_DescriptorMap; }
 
 		VkDescriptorSet GetDescriptorSet() { return m_DescriptorSet; }
 	private:

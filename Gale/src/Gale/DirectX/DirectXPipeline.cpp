@@ -17,6 +17,17 @@ namespace Gale {
 		CreatePipeline();
 	}
 
+	DirectXPipeline::DirectXPipeline(const std::string& filepath, DescriptorSetMap descriptorSetMap)
+	{
+		m_Filepath = filepath;
+
+		m_Shader = CreateScope<DirectXShader>(filepath);
+		m_Input = m_Shader->GetVertexInput();
+
+		CreateRootSignature();
+		CreatePipeline();
+	}
+
 	DirectXPipeline::DirectXPipeline(const std::string& vertPath, const std::string& fragPath)
 	{
 
@@ -55,6 +66,59 @@ namespace Gale {
 			D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
 			D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
 			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+		// define root signature with transformation matrix
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+		rootSignatureDesc.Init(
+			(UINT)std::size(rootParameters),
+			rootParameters,
+			0,
+			nullptr,
+			rootSignatureFlags);
+
+		D3D12SerializeRootSignature(
+			&rootSignatureDesc,
+			D3D_ROOT_SIGNATURE_VERSION_1,
+			&signature,
+			&error
+		);
+
+		device->CreateRootSignature(
+			0,
+			signature->GetBufferPointer(),
+			signature->GetBufferSize(),
+			IID_PPV_ARGS(&m_RootSignature));
+
+		signature->Release();
+		if (error)
+		{
+			error->Release();
+		}
+	}
+
+	void DirectXPipeline::CreateRootSignature(DescriptorSetMap descriptorSetMap)
+	{
+		auto device = DirectXDevice::Get().Device();
+
+		ID3DBlob* signature;
+		ID3DBlob* error;
+
+		CD3DX12_DESCRIPTOR_RANGE descriptorRange[1];
+		descriptorRange[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND);
+
+		CD3DX12_ROOT_PARAMETER rootParameters[2]{};
+
+		rootParameters[0].InitAsConstants(sizeof(glm::mat4) / 4, 0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+		rootParameters[1].InitAsDescriptorTable(1, &descriptorRange[0], D3D12_SHADER_VISIBILITY_PIXEL);
+
+		// Allow input layout and vertex shader and deny unnecessary access to certain pipeline stages.
+		const D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_MESH_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_AMPLIFICATION_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+
 		// define root signature with transformation matrix
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 		rootSignatureDesc.Init(

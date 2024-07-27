@@ -103,7 +103,7 @@ namespace Gale {
 
 	void VulkanRenderer::BeginSwapchainRendering(Ref<Pipeline> pipeline)
 	{
-		m_LatestPipeline = pipeline;
+		m_LatestPipeline = std::static_pointer_cast<VulkanPipeline>(pipeline);
 		m_LatestLayout = std::static_pointer_cast<VulkanPipeline>(pipeline)->GetPipelineLayout();
 
 		auto commandBuffer = m_CommandBuffers[m_CurrentFrameIndex];
@@ -248,14 +248,14 @@ namespace Gale {
 
 	void VulkanRenderer::BindPipeline(Ref<Pipeline> pipeline)
 	{
-		m_LatestPipeline = pipeline;
+		m_LatestPipeline = std::static_pointer_cast<VulkanPipeline>(pipeline);
 		m_LatestLayout = std::static_pointer_cast<VulkanPipeline>(pipeline)->GetPipelineLayout();
 
 		auto commandBuffer = GetCurrentCommandBuffer();
 
 		vkCmdBindPipeline(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			std::static_pointer_cast<VulkanPipeline>(pipeline)->GetPipeline());
+			m_LatestPipeline->GetPipeline());
 
 	}
 
@@ -275,26 +275,7 @@ namespace Gale {
 		vkCmdBindIndexBuffer(commandBuffer, std::static_pointer_cast<VulkanIndexBuffer>(indexBuffer)->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 	}
 
-	void VulkanRenderer::BindUniformBuffer(Ref<UniformBuffer> uniformBuffer)
-	{
-		/*
-		auto commandBuffer = GetCurrentCommandBuffer();
-		auto descriptorSet = std::static_pointer_cast<VulkanPipeline>(m_LatestPipeline)->GetDescriptorSet();
-
-		vkCmdBindDescriptorSets(
-			commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			m_LatestLayout,
-			0,
-			1,
-			&descriptorSet,
-			0,
-			nullptr
-		);
-		*/
-	}
-
-	void VulkanRenderer::BindDescriptorSet(Ref<DescriptorSet> descriptorSet)
+	void VulkanRenderer::BindDescriptorSet(Ref<DescriptorSet> descriptorSet, uint32_t index)
 	{
 		auto commandBuffer = GetCurrentCommandBuffer();
 		auto set = std::static_pointer_cast<VulkanDescriptorSet>(descriptorSet)->GetDescriptorSet();
@@ -303,7 +284,7 @@ namespace Gale {
 			commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			m_LatestLayout,
-			0,
+			index,
 			1,
 			&set,
 			0,

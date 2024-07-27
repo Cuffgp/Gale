@@ -20,8 +20,7 @@ namespace Gale {
 		static void BindPipeline(Ref<Pipeline> pipeline);
 		static void BindVertexBuffer(Ref<VertexBuffer> vertexBuffer);
 		static void BindIndexBuffer(Ref<IndexBuffer> indexBuffer);
-		static void BindUniformBuffer(Ref<UniformBuffer> uniformBuffer);
-		static void BindDescriptorSet(Ref<DescriptorSet> descriptorSet);
+		static void BindDescriptorSet(Ref<DescriptorSet> descriptorSet, uint32_t index);
 		static void DrawIndexed(uint32_t indexCount);
 
 		static void SetTransform(glm::mat4 transform);

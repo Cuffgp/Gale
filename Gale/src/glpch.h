@@ -14,3 +14,6 @@
 
 #include "Gale/Core/Base.h"
 #include "Gale/Core/Log.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image/stb_image.h"

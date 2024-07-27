@@ -10,13 +10,14 @@ namespace Gale {
 	{
 	public:
 		DirectXDescriptorSet(std::vector<ShaderDescriptor> descriptors);
+		DirectXDescriptorSet(DescriptorMap descriptorMap);
 		~DirectXDescriptorSet();
 
-		ID3D12DescriptorHeap* GetUniformHeap() { return m_UniformHeap; }
+		virtual DescriptorMap& GetDescriptorMap() override { return m_DescriptorMap; }
+
 	private:
 		DescriptorMap m_DescriptorMap;
 
-		ID3D12DescriptorHeap* m_UniformHeap;
 	};
 
 }

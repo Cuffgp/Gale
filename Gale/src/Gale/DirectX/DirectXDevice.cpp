@@ -12,6 +12,7 @@ namespace Gale {
 		CreateDevice();
 
 		m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_CommandAllocator));
+		m_CommandAllocator->SetName(L"DeviceCommandAllocator");
 		m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_Fence));
 		m_FenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	}
@@ -139,6 +140,7 @@ namespace Gale {
 			GL_ERROR("Failed to create command allocator");
 		}
 		*/
+
 	}
 
 	ID3D12GraphicsCommandList* DirectXDevice::BeginSingleTimeCommands()
@@ -154,6 +156,7 @@ namespace Gale {
 
 	void DirectXDevice::EndSingleTimeCommands(ID3D12GraphicsCommandList* commandList)
 	{
+		commandList->Close();
 		ID3D12CommandList* ppCommandLists[] = { commandList };
 		m_CommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 		commandList->Release();
@@ -162,6 +165,47 @@ namespace Gale {
 	
 		m_Fence->SetEventOnCompletion(m_FenceValue, m_FenceEvent);
 		WaitForSingleObjectEx(m_FenceEvent, INFINITE, FALSE);
+	}
+
+	void DirectXDevice::CopyBuffer(ID3D12Resource* srcBuffer, ID3D12Resource* dstBuffer, uint32_t size)
+	{
+		auto commandList = BeginSingleTimeCommands();
+
+		commandList->CopyBufferRegion(
+			dstBuffer,
+			0,
+			srcBuffer,
+			0,
+			size);
+
+		EndSingleTimeCommands(commandList);
+	}
+
+	void DirectXDevice::CopyAndTransitionBuffer(
+		ID3D12Resource* srcBuffer,
+		ID3D12Resource* dstBuffer,
+		uint32_t size,
+		D3D12_RESOURCE_STATES state)
+	{
+		auto commandList = BeginSingleTimeCommands();
+
+		// Copy
+		commandList->CopyBufferRegion(
+			dstBuffer,
+			0,
+			srcBuffer,
+			0,
+			size);
+
+		// Transition
+		auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			dstBuffer,
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			state);
+
+		commandList->ResourceBarrier(1, &barrier);
+
+		EndSingleTimeCommands(commandList);
 	}
 
 }

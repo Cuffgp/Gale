@@ -4,14 +4,13 @@
 
 namespace Gale {
 
-	DirectXBuffer::DirectXBuffer(uint32_t size, D3D12_HEAP_TYPE type, uint32_t alignedSize):
+	DirectXBuffer::DirectXBuffer(uint32_t size, D3D12_HEAP_TYPE type, D3D12_RESOURCE_STATES state, uint32_t alignedSize):
 		m_Size(size), m_AlignedSize(alignedSize)
 	{
 		if (alignedSize == 0)
 		{
 			m_AlignedSize = size;
 		}
-
 
 		auto device = DirectXDevice::Get().Device();
 
@@ -39,7 +38,7 @@ namespace Gale {
 			&heapProps,
 			D3D12_HEAP_FLAG_NONE,
 			&resourceDesc,
-			D3D12_RESOURCE_STATE_GENERIC_READ,
+			state,
 			nullptr,
 			IID_PPV_ARGS(&m_Buffer));
 
@@ -84,5 +83,7 @@ namespace Gale {
 		else
 			memcpy(m_Mapped, data, size);
 	}
+
+
 
 }

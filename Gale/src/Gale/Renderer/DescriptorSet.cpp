@@ -20,5 +20,17 @@ namespace Gale {
 		return nullptr;
 	}
 
+	Ref<DescriptorSet> DescriptorSet::Create(DescriptorMap descriptorMap)
+	{
+		switch (RendererAPI::Current())
+		{
+		case RendererAPI::API::None: { return nullptr; }
+		case RendererAPI::API::Vulkan: { return CreateRef<VulkanDescriptorSet>(descriptorMap); }
+		case RendererAPI::API::DirectX: { return CreateRef<DirectXDescriptorSet>(descriptorMap); }
+		}
+		GL_ASSERT(false, "Unknown renderer API.");
+		return nullptr;
+	}
+
 
 }

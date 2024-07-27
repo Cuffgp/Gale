@@ -21,10 +21,11 @@ Gale::Application* Gale::CreateApplication()
 {
 	Gale::RendererAPI::Set(RendererAPI::API::DirectX);
 
-	if (Gale::RendererAPI::Current() == Gale::RendererAPI::API::Vulkan)
-		Gale::VulkanDevice::Init();
-	else
-		Gale::DirectXDevice::Init();
+	switch (RendererAPI::Current())
+	{
+	case RendererAPI::API::Vulkan: { Gale::VulkanDevice::Init(); break; }
+	case RendererAPI::API::DirectX: { Gale::DirectXDevice::Init(); break; }
+	}
 
 	return new SandboxApp();
 }

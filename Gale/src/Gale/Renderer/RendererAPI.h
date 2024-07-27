@@ -31,8 +31,7 @@ namespace Gale {
 		virtual void BindPipeline(Ref<Pipeline> pipeline) = 0;
 		virtual void BindVertexBuffer(Ref<VertexBuffer> vertexBuffer) = 0;
 		virtual void BindIndexBuffer(Ref<IndexBuffer> indexBuffer) = 0;
-		virtual void BindUniformBuffer(Ref<UniformBuffer> uniformBuffer) = 0;
-		virtual void BindDescriptorSet(Ref<DescriptorSet> descriptorSet) = 0;
+		virtual void BindDescriptorSet(Ref<DescriptorSet> descriptorSet, uint32_t index) = 0;
 
 		virtual void DrawIndexed(uint32_t indexCount) = 0;
 

@@ -17,7 +17,6 @@ namespace Gale {
 		virtual uint32_t GetIndexCount() override { return m_IndexCount; };
 
 		D3D12_INDEX_BUFFER_VIEW GetView() { return m_IndexBufferView; }
-		void CreateBuffer(uint32_t size);
 		void SetData(void* data);
 
 	private:

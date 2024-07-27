@@ -10,6 +10,8 @@
 
 namespace Gale {
 
+	DirectXDescriptorHeap* DirectXRenderer::DescriptorHeap = nullptr;
+
 	DirectXRenderer::DirectXRenderer()
 	{
 		m_Swapchain = CreateScope<DirectXSwapchain>();
@@ -26,6 +28,7 @@ namespace Gale {
 		m_FenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 
 		//WaitForGPU();
+		DescriptorHeap = new DirectXDescriptorHeap();
 	}
 
 	DirectXRenderer::~DirectXRenderer()
@@ -39,6 +42,7 @@ namespace Gale {
 		}
 		m_CommandList->Release();
 		
+		delete DescriptorHeap;
 	}
 
 	void DirectXRenderer::BeginFrame()
@@ -58,6 +62,8 @@ namespace Gale {
 
 	void DirectXRenderer::BeginSwapchainRendering(Ref<Pipeline> pipeline)
 	{
+		m_LatestPipeline = std::static_pointer_cast<DirectXPipeline>(pipeline);
+
 		D3D12_RECT surfaceSize;
 		surfaceSize.left = 0;
 		surfaceSize.top = 0;
@@ -72,7 +78,6 @@ namespace Gale {
 		viewport.MinDepth = .1f;
 		viewport.MaxDepth = 1.f;
 
-		m_CommandList->SetGraphicsRootSignature(DirectXPipeline::GetRootSignature());
 		m_CommandList->RSSetViewports(1, &viewport);
 		m_CommandList->RSSetScissorRects(1, &surfaceSize);
 
@@ -112,8 +117,10 @@ namespace Gale {
 
 	void DirectXRenderer::BindPipeline(Ref<Pipeline> pipeline)
 	{
-		auto state = std::static_pointer_cast<DirectXPipeline>(pipeline)->GetState();
-		m_CommandList->SetPipelineState(state);
+		m_LatestPipeline = std::static_pointer_cast<DirectXPipeline>(pipeline);
+
+		m_CommandList->SetGraphicsRootSignature(DirectXPipeline::GetRootSignature());
+		m_CommandList->SetPipelineState(m_LatestPipeline->GetState());
 	}
 
 	void DirectXRenderer::BindVertexBuffer(Ref<VertexBuffer> vertexBuffer)
@@ -128,20 +135,15 @@ namespace Gale {
 		m_CommandList->IASetIndexBuffer(&view);
 	}
 
-	void DirectXRenderer::BindUniformBuffer(Ref<UniformBuffer> uniformBuffer)
+	void DirectXRenderer::BindDescriptorSet(Ref<DescriptorSet> descriptorSet, uint32_t index)
 	{
-		auto address = std::static_pointer_cast<DirectXUniformBuffer>(uniformBuffer)->GetGPUAddress();
-		m_CommandList->SetGraphicsRootConstantBufferView(1, address);
-	}
-
-	void DirectXRenderer::BindDescriptorSet(Ref<DescriptorSet> descriptorSet)
-	{
-		auto heap = std::static_pointer_cast<DirectXDescriptorSet>(descriptorSet)->GetUniformHeap();
+		//auto heap = std::static_pointer_cast<DirectXDescriptorSet>(descriptorSet)->GetUniformHeap();
+		auto heap = DescriptorHeap->UniformHeap();
 
 		ID3D12DescriptorHeap* ppHeaps[] = { heap };
 		m_CommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-		m_CommandList->SetGraphicsRootDescriptorTable(1, heap->GetGPUDescriptorHandleForHeapStart());
+		m_CommandList->SetGraphicsRootDescriptorTable(index, heap->GetGPUDescriptorHandleForHeapStart());
 	}
 
 	void DirectXRenderer::DrawIndexed(uint32_t indexCount)

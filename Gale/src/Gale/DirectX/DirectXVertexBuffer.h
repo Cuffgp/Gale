@@ -19,7 +19,6 @@ namespace Gale {
 
 		D3D12_VERTEX_BUFFER_VIEW GetView() { return m_VertexBufferView; }
 	private:
-		void CreateBuffer(uint32_t size);
 
 		uint32_t m_Size;
 		VertexInput m_Input;

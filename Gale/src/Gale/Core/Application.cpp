@@ -4,8 +4,7 @@
 #include "Gale/Core/Application.h"
 #include "Gale/Renderer/Renderer.h"
 #include "Gale/Renderer/Camera.h"
-
-#include "Gale/DirectX/DirectXShader.h"
+#include "Gale/Renderer/ObjLoader.h"
 
 namespace Gale {
 	
@@ -22,23 +21,17 @@ namespace Gale {
 
 		Renderer::Init();
 
-		auto vertexInput = VertexInput({
-		{ "Pos",   ShaderDataType::Float3, 0 },
-		{ "Color", ShaderDataType::Float3, 1 }
-			});
-
-		auto shaderDescriptors = std::vector<ShaderDescriptor>();
-		shaderDescriptors.push_back(ShaderDescriptor(0, 0, ShaderStage::Fragment, ShaderDescriptorType::Uniform, 1));
+		auto obj = ObjLoader("assets/mesh/cube.obj");
 
 		float CubeVertices[] = {
-			-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.5f, 0.5f, 0.5f,
+			-0.5f, -0.5f,  0.5f,
+			 0.5f, -0.5f,  0.5f,
+			 0.5f,  0.5f,  0.5f,
+			-0.5f,  0.5f,  0.5f,
+			-0.5f, -0.5f, -0.5f,
+			 0.5f, -0.5f, -0.5f,
+			 0.5f,  0.5f, -0.5f,
+			-0.5f,  0.5f, -0.5f,
 		};
 
 		uint32_t CubeIndices[] = {
@@ -49,7 +42,7 @@ namespace Gale {
 			3, 2, 6,  6, 7, 3,
 			4, 5, 1,  1, 0, 4
 		};
-		
+
 		float FaceColors[] = {
 			1.f, 0.f, 0.f, 1.f,
 			0.f, 1.f, 0.f, 1.f,
@@ -58,18 +51,28 @@ namespace Gale {
 			0.f, 1.f, 1.f, 1.f,
 			1.f, 1.f, 0.f, 1.f,
 		};
-		
-		m_ConstantSet = DescriptorSet::Create(shaderDescriptors);
 
-		m_VertexBuffer = VertexBuffer::Create(CubeVertices, 8 * 6 * sizeof(float), vertexInput);
+		auto vertexInput = VertexInput({
+		{ "Pos",   ShaderDataType::Float3, 0 }
+			});
+
+		DescriptorMap descriptorMap;
+		descriptorMap[0] = ShaderDescriptor(0, 0, ShaderStage::Fragment, ShaderDescriptorType::Uniform, 1);
+
+		m_ConstantSet = DescriptorSet::Create(descriptorMap);
+
+		DescriptorSetMap descriptorSetMap;
+		descriptorSetMap[0] = descriptorMap;
+
+		m_VertexBuffer = VertexBuffer::Create(CubeVertices, 8 * 3 * sizeof(float), vertexInput);
 		m_IndexBuffer = IndexBuffer::Create(CubeIndices, 6 * 6 * sizeof(uint32_t));
 
 		m_UniformBuffer = UniformBuffer::Create(6 * 4 * sizeof(float));
 		m_UniformBuffer->SetData(FaceColors);
 
-		m_Pipeline = Pipeline::Create("assets/shaders/uniform_shader");
 		m_UniformBuffer->Write(m_ConstantSet);
 
+		m_Pipeline = Pipeline::Create("assets/shaders/uniform_shader", descriptorSetMap);
 
 		GL_INFO("Index Count {}", m_IndexBuffer->GetIndexCount());
 
@@ -109,7 +112,7 @@ namespace Gale {
 			Renderer::BindVertexBuffer(m_VertexBuffer);
 			Renderer::BindIndexBuffer(m_IndexBuffer);
 
-			Renderer::BindDescriptorSet(m_ConstantSet);
+			Renderer::BindDescriptorSet(m_ConstantSet, 1);
 
 			Renderer::SetTransform(camera.GetProjectionView() * translation * rotation);
 			Renderer::DrawIndexed(m_IndexBuffer->GetIndexCount());

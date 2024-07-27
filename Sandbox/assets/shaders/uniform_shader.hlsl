@@ -15,7 +15,7 @@ struct CubeColors
 };
 ConstantBuffer<CubeColors> cubeColors : register(b0);
 
-PSInput VSMain(float3 position : POSITION, float3 color : COLOR)
+PSInput VSMain(float3 position : POSITION)
 {
     PSInput result;
 

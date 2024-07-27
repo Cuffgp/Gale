@@ -18,6 +18,17 @@ namespace Gale {
 		CreatePipeline();
 	}
 
+	VulkanPipeline::VulkanPipeline(std::string filepath, DescriptorSetMap descriptorSetMap)
+	{
+		m_Shader = CreateScope<VulkanShader>(filepath);
+		m_Input = m_Shader->GetVertexInput();
+		m_DescriptorSetMap = m_Shader->GetDescriptorSetMap();
+
+		CreateDescriptorSetLayout(m_DescriptorSetMap);
+		CreatePipelineLayout();
+		CreatePipeline();
+	}
+
 	VulkanPipeline::VulkanPipeline(std::string vertPath, std::string fragPath)
 	{
 		m_Shader = CreateScope<VulkanShader>(vertPath, fragPath);

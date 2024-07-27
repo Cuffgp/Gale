@@ -7,7 +7,7 @@ namespace Gale {
 	class DirectXBuffer
 	{
 	public:
-		DirectXBuffer(uint32_t size, D3D12_HEAP_TYPE type, uint32_t alignedSize = 0);
+		DirectXBuffer(uint32_t size, D3D12_HEAP_TYPE type, D3D12_RESOURCE_STATES state, uint32_t alignedSize = 0);
 		~DirectXBuffer();
 
 		void Map();

@@ -20,6 +20,18 @@ namespace Gale {
 		return nullptr;
 	}
 
+	Ref<Pipeline> Pipeline::Create(std::string filepath, DescriptorSetMap descriptorSetMap)
+	{
+		switch (RendererAPI::Current())
+		{
+		case RendererAPI::API::None: { return nullptr; }
+		case RendererAPI::API::Vulkan: { return CreateRef<VulkanPipeline>(filepath, descriptorSetMap); }
+		case RendererAPI::API::DirectX: { return CreateRef<DirectXPipeline>(filepath, descriptorSetMap); }
+		}
+		GL_ASSERT(false, "Unknown renderer API.");
+		return nullptr;
+	}
+
 	Ref<Pipeline> Pipeline::Create(std::string vertPath, std::string fragPath)
 	{
 		switch (RendererAPI::Current())

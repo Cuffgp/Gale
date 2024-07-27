@@ -27,8 +27,7 @@ namespace Gale {
 		virtual void BindPipeline(Ref<Pipeline> pipeline) override;
 		virtual void BindVertexBuffer(Ref<VertexBuffer> vertexBuffer) override;
 		virtual void BindIndexBuffer(Ref<IndexBuffer> indexBuffer) override;
-		virtual void BindUniformBuffer(Ref<UniformBuffer> uniformBuffer) override;
-		virtual void BindDescriptorSet(Ref<DescriptorSet> descriptorSet) override;
+		virtual void BindDescriptorSet(Ref<DescriptorSet> descriptorSet, uint32_t index) override;
 
 		virtual void DrawIndexed(uint32_t indexCount) override;
 
@@ -41,7 +40,9 @@ namespace Gale {
 		void MoveToNextFrame();
 
 		const static uint32_t MaxFramesInFlight = 2;
+		static DirectXDescriptorHeap* DescriptorHeap;
 	private:
+		Ref<DirectXPipeline> m_LatestPipeline;
 		Scope<DirectXSwapchain> m_Swapchain;
 
 		uint32_t m_CurrentFrameIndex = 0;
@@ -52,6 +53,8 @@ namespace Gale {
 
 		ID3D12CommandAllocator* m_CommandAllocators[MaxFramesInFlight];
 		ID3D12GraphicsCommandList* m_CommandList;
+
+		
 	};
 
 }
