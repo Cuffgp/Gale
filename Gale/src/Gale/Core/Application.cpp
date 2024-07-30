@@ -21,17 +21,15 @@ namespace Gale {
 
 		Renderer::Init();
 
-		auto obj = ObjLoader("assets/mesh/cube.obj");
-
 		float CubeVertices[] = {
-			-0.5f, -0.5f,  0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-			-0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			-0.5f,  0.5f, -0.5f,
+			-0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f
 		};
 
 		uint32_t CubeIndices[] = {
@@ -52,8 +50,14 @@ namespace Gale {
 			1.f, 1.f, 0.f, 1.f,
 		};
 
+		//auto vertexInput = VertexInput({
+		//{ "Pos",   ShaderDataType::Float3, 0 }
+		//	});
+
 		auto vertexInput = VertexInput({
-		{ "Pos",   ShaderDataType::Float3, 0 }
+			{ "Pos",		ShaderDataType::Float3, 0 },
+			{ "Normal",		ShaderDataType::Float3, 1 },
+			{ "Uv",			ShaderDataType::Float2, 2 }
 			});
 
 		DescriptorMap descriptorMap;
@@ -64,8 +68,15 @@ namespace Gale {
 		DescriptorSetMap descriptorSetMap;
 		descriptorSetMap[0] = descriptorMap;
 
-		m_VertexBuffer = VertexBuffer::Create(CubeVertices, 8 * 3 * sizeof(float), vertexInput);
-		m_IndexBuffer = IndexBuffer::Create(CubeIndices, 6 * 6 * sizeof(uint32_t));
+		//m_VertexBuffer = VertexBuffer::Create(CubeVertices, 8 * 8 * sizeof(float), vertexInput);
+		//m_IndexBuffer = IndexBuffer::Create(CubeIndices, 6 * 6 * sizeof(uint32_t));
+
+		auto obj = ObjLoader("assets/mesh/flat_vase.obj");
+
+		m_VertexBuffer = obj.GetVertexBuffer();
+		m_IndexBuffer = obj.GetIndexBuffer();
+
+		m_Texture = Texture::Create("assets/texture/statue.jpg");
 
 		m_UniformBuffer = UniformBuffer::Create(6 * 4 * sizeof(float));
 		m_UniformBuffer->SetData(FaceColors);
@@ -112,7 +123,7 @@ namespace Gale {
 			Renderer::BindVertexBuffer(m_VertexBuffer);
 			Renderer::BindIndexBuffer(m_IndexBuffer);
 
-			Renderer::BindDescriptorSet(m_ConstantSet, 1);
+			Renderer::BindDescriptorSet(m_ConstantSet, 0);
 
 			Renderer::SetTransform(camera.GetProjectionView() * translation * rotation);
 			Renderer::DrawIndexed(m_IndexBuffer->GetIndexCount());

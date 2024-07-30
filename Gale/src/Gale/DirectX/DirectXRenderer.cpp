@@ -143,7 +143,7 @@ namespace Gale {
 		ID3D12DescriptorHeap* ppHeaps[] = { heap };
 		m_CommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-		m_CommandList->SetGraphicsRootDescriptorTable(index, heap->GetGPUDescriptorHandleForHeapStart());
+		m_CommandList->SetGraphicsRootDescriptorTable(index+1, heap->GetGPUDescriptorHandleForHeapStart());
 	}
 
 	void DirectXRenderer::DrawIndexed(uint32_t indexCount)

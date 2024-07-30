@@ -15,12 +15,9 @@ int main(int argc, char** argv)
 	app->Run();
 	delete app;
 
-	if (Gale::RendererAPI::Current() == Gale::RendererAPI::API::Vulkan)
+	switch (Gale::RendererAPI::Current())
 	{
-		Gale::VulkanDevice::Destroy();
-	}
-	else
-	{
-		Gale::DirectXDevice::Destroy();
+	case Gale::RendererAPI::API::Vulkan: { Gale::VulkanDevice::Destroy(); break; }
+	case Gale::RendererAPI::API::DirectX: { Gale::DirectXDevice::Destroy(); break; }
 	}
 }

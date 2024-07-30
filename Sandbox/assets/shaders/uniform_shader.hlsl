@@ -15,7 +15,7 @@ struct CubeColors
 };
 ConstantBuffer<CubeColors> cubeColors : register(b0);
 
-PSInput VSMain(float3 position : POSITION)
+PSInput VSMain(float3 position : POSITION, float3 normal : NORMAL, float2 uv : TEXCOORD0)
 {
     PSInput result;
 
@@ -27,5 +27,6 @@ PSInput VSMain(float3 position : POSITION)
 
 float4 PSMain(uint primitiveID : SV_PrimitiveID) : SV_TARGET
 {
-	return cubeColors.colors[primitiveID >> 1];
+	//return cubeColors.colors[0];
+	return cubeColors.colors[primitiveID % 6];
 }

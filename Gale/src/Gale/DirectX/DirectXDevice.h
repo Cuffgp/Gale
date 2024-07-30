@@ -31,6 +31,8 @@ namespace Gale {
 			ID3D12Resource* dstBuffer,
 			uint32_t size,
 			D3D12_RESOURCE_STATES state);
+
+		void CopyBufferToImage(ID3D12Resource* buffer, ID3D12Resource* image, uint32_t size);
 	private:
 		DirectXDevice();
 		~DirectXDevice();

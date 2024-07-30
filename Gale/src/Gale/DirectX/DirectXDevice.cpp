@@ -208,4 +208,9 @@ namespace Gale {
 		EndSingleTimeCommands(commandList);
 	}
 
+
+	void DirectXDevice::CopyBufferToImage(ID3D12Resource* buffer, ID3D12Resource* image, uint32_t size)
+	{
+
+	}
 }

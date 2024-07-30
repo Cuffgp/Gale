@@ -45,12 +45,18 @@ namespace Gale {
 		ID3DBlob* signature;
 		ID3DBlob* error;
 
-		D3D12_DESCRIPTOR_RANGE  descriptorTableRanges[1]; // only one range right now
+		D3D12_DESCRIPTOR_RANGE  descriptorTableRanges[2]; // only one range right now
 		descriptorTableRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV; // this is a range of constant buffer views (descriptors)
 		descriptorTableRanges[0].NumDescriptors = 1; // we only have one constant buffer, so the range is only 1
 		descriptorTableRanges[0].BaseShaderRegister = 0; // start index of the shader registers in the range
 		descriptorTableRanges[0].RegisterSpace = 0; // space 0. can usually be zero
 		descriptorTableRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+		descriptorTableRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER;
+		descriptorTableRanges[1].NumDescriptors = 1;
+		descriptorTableRanges[1].BaseShaderRegister = 0;
+		descriptorTableRanges[1].RegisterSpace = 0;
+		descriptorTableRanges[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 		CD3DX12_ROOT_PARAMETER rootParameters[2]{};
 

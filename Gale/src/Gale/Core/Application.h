@@ -8,6 +8,7 @@
 #include "Gale/Renderer/IndexBuffer.h"
 #include "Gale/Renderer/UniformBuffer.h"
 #include "Gale/Renderer/DescriptorSet.h"
+#include "Gale/Renderer/Texture.h"
 
 namespace Gale {
 	
@@ -32,6 +33,7 @@ namespace Gale {
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<UniformBuffer> m_UniformBuffer;
 		Ref<DescriptorSet> m_ConstantSet;
+		Ref<Texture> m_Texture;
 
 		static Application* s_Instance;
 	};

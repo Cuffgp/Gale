@@ -37,21 +37,19 @@ namespace Gale {
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 		
+		Vertex vertex;
 		// Loop over shapes
-		for (size_t s = 0; s < shapes.size(); s++) 
+		for (const auto& shape : shapes) 
 		{
-			Vertex vertex;
 			// Loop over faces(polygon)
 			size_t index_offset = 0;
-			for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) 
+			for (size_t fv : shape.mesh.num_face_vertices)
 			{
-				size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
-
 				// Loop over vertices in the face.
 				for (size_t v = 0; v < fv; v++) 
 				{
 					// access to vertex
-					tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+					tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
 					vertex.Position.x = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
 					vertex.Position.y = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
 					vertex.Position.z = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
@@ -79,20 +77,22 @@ namespace Gale {
 					vertices.push_back(vertex);
 					indices.push_back(indices.size());
 				}
+
 				index_offset += fv;
 
 				// per-face material
-				//shapes[s].mesh.material_ids[f];
+				//shapes.mesh.material_ids[f];
 			}
+
 		}
 		auto vertexInput = VertexInput({
-			{ "Pos",   ShaderDataType::Float3, 0 },
-			{ "Normal",   ShaderDataType::Float3, 0 },
-			{ "Uv",   ShaderDataType::Float2, 0 }
+			{ "Pos",		ShaderDataType::Float3, 0 },
+			{ "Normal",		ShaderDataType::Float3, 1 },
+			{ "Uv",			ShaderDataType::Float2, 2 }
 			});
 
-		m_VertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size(), vertexInput);
-		m_IndexBuffer = IndexBuffer::Create(indices.data(), indices.size());
+		m_VertexBuffer = VertexBuffer::Create(vertices.data(), vertices.size()*sizeof(Vertex), vertexInput);
+		m_IndexBuffer = IndexBuffer::Create(indices.data(), indices.size()*sizeof(uint32_t));
 	}
 
 	ObjLoader::~ObjLoader()

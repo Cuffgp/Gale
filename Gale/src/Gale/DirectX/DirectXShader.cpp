@@ -97,6 +97,8 @@ namespace Gale {
 					return lhs.Location < rhs.Location;
 				});
 			m_VertexInput.CalculateOffsetAndStride();
+
+			m_VertexInput.Log();
 		}
 
 		for (int i = 0; i < shaderDesc.ConstantBuffers; i++)

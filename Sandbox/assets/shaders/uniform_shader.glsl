@@ -2,6 +2,8 @@
 #version 450
 
 layout(location = 0) in vec3 inPosition;
+layout(location = 1) in vec3 inNormal;
+layout(location = 2) in vec2 inUv;
 
 layout(location = 0) out vec3 fragColor;
 
@@ -26,6 +28,7 @@ layout(set = 0, binding = 0) uniform UniformBufferObject {
 
 void main() {
 
-    outColor = ubo.colors[gl_PrimitiveID  >> 1];
+    outColor = ubo.colors[gl_PrimitiveID  % 6];
+	//outColor = ubo.colors[0];
     //outColor = vec4(fragColor, 1.0);
 }

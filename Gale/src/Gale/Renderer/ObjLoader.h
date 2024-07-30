@@ -14,7 +14,7 @@ namespace Gale {
 		{
 			glm::vec3 Position = glm::vec3{0., 0., 0.};
 			glm::vec3 Normal = glm::vec3{ 0., 0., 0. };
-			glm::vec3 Uv = glm::vec3{ 0., 0., 0. };
+			glm::vec2 Uv = glm::vec2{ 0., 0.};
 		};
 	public:
 		ObjLoader(std::string filepath);
