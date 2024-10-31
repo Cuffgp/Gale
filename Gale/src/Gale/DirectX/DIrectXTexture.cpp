@@ -57,7 +57,7 @@ namespace Gale {
 		D3D12_SUBRESOURCE_DATA textureData = {};
 		textureData.pData = pixels; // Pointer to the raw image data loaded with stb_image
 		textureData.RowPitch = m_Width * 4; // Number of bytes per row (4 bytes per pixel for RGBA)
-		textureData.SlicePitch = textureData.RowPitch * m_Height; // Total size of the image data
+		textureData.SlicePitch = m_Width * m_Height * 4; // Total size of the image data
 
 		auto commandList = DirectXDevice::Get().BeginSingleTimeCommands();
 

@@ -119,4 +119,9 @@ namespace Gale {
 		vkDestroySampler(device, m_Sampler, nullptr);
 	}
 
+	void VulkanTexture::Write(Ref<DescriptorSet> descriptorSet)
+	{
+
+	}
+
 }

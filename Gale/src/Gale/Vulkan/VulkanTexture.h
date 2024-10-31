@@ -12,6 +12,7 @@ namespace Gale {
 		VulkanTexture(std::string filepath);
 		~VulkanTexture();
 
+		virtual void Write(Ref<DescriptorSet> descriptorSet) override;
 	private:
 		VkImage m_Image;
 		VkDeviceMemory m_ImageMemory;
